@@ -1,0 +1,37 @@
+.nav
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 0 50px
+  height: 7vh
+  background-color: #222
+
+  .nav__logo
+    a
+      display: block
+      line-height: 7vh
+      font-size: 1.25em
+      color: #ddd
+      text-transform: uppercase
+      text-decoration: none
+
+  .nav__links
+    display: flex
+    justify-content: space-around
+    width: 18%
+    list-style-type: none
+
+    .nav__link
+      a
+        padding: 0 10px
+        display: block
+        line-height: 7vh
+        color: #ddd
+        text-transform: uppercase
+        text-decoration: none
+        transition: background-color .2s, color .2s
+        font-size: .95em
+
+        &:hover
+          color: #fff
+          background-color: #000
