@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import Register from '../../views/register/Register';
 import AccountCreatedMessage from '../../views/account created/AccountCreatedMessage';
+import ConfirmAccount from '../../views/confirm account/ConfirmAccount';
 
 const RouterView = () => {
   return (
@@ -10,6 +11,7 @@ const RouterView = () => {
       {/* <Route path="/" exact component={Home} /> */}
       <Route path="/register" component={Register} />
       <Route path="/accountCreated" component={AccountCreatedMessage} />
+      <Route path="/confirmAccount" component={ConfirmAccount} />
       {/* <Route path="/login" component={Login} /> */}
     </Switch>
   );
