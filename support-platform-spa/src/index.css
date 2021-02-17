@@ -5,3 +5,12 @@
   border: 0;
   outline: 0;
 }
+
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  font-size: 16px;
+  background-color: #3598DC;
+}
