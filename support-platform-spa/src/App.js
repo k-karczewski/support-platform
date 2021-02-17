@@ -1,11 +1,16 @@
+import Navigation from './layout/navigation/Navigation';
+import RouterView from './layout/router view/RouterView';
+
 import './App.css';
-import Registration from './Views/Registration/Registration';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 function App() {
   return (
     <div className="App">
-      Hello World!
-      <Registration />
+      <Router>
+        <Navigation />
+        <RouterView />
+      </Router>
     </div>
   );
 }
