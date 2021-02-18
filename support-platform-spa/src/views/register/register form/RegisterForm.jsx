@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import AuthService from '../../../_services/AuthService';
 import RegisterFormErrors from './register form errors/RegisterFormErrors';
 
 import './RegisterForm.sass';
@@ -31,36 +32,17 @@ const Register = () => {
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (username && email && password && confirmPassword && (password === confirmPassword)) {
-      const userToRegisterDto = {
-        username,
-        email,
-        password,
-        confirmPassword
-      };
-
-      fetch('https://localhost:44339/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userToRegisterDto),
-      })
-        .then(response => {
-          debugger
-          console.log(response)
-          if (!response.ok) {
-            console.log(response);
-            throw response.json();
-          }
-          history.push('/accountCreated');
-        })
-        .catch((error) => {
-          error.then(errors => setFormErrors(errors));
-        });
+      const authService = new AuthService();
+      const result = await authService.register(username, email, password, confirmPassword);
+      debugger
+      if (result.succeeded) {
+        history.push('/accountCreated');
+      } else {
+        setFormErrors(result.errors);
+      }
     }
   }
 
@@ -94,7 +76,6 @@ const Register = () => {
 
       {formErrors.length > 0 && <RegisterFormErrors errors={formErrors} />}
     </main>
-
   );
 }
 
