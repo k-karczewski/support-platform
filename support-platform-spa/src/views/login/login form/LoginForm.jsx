@@ -35,7 +35,6 @@ const LoginForm = () => {
         history.push('/'); // push to view for logged in user
       } else {
         // show error message
-        debugger
         setFormErrors(result.errors);
       }
     }
