@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace SupportPlatform.Services
 {
@@ -68,6 +69,34 @@ namespace SupportPlatform.Services
                 }
 
                 return new ServiceResult(ResultType.Error, new List<string> { e.Message });
+            }
+        }
+
+        public async Task<IServiceResult<string>> LoginAsync(UserToLoginDto userToLogin)
+        {
+            userToLogin.Username = userToLogin.Username.Trim().ToLower();
+            UserEntity user = await _signInManager.UserManager.FindByNameAsync(userToLogin.Username);
+
+            if(user != null)
+            {
+                SignInResult loginResult = await _signInManager.CheckPasswordSignInAsync(user, userToLogin.Password, false);
+
+                if(loginResult.Succeeded)
+                {
+                    IList<string> userRoles = await _signInManager.UserManager.GetRolesAsync(user);
+
+                    string jsonWebToken = JsonWebTokenGenerator.GenerateJsonWebTokenForUser(user, userRoles, _configuration);
+
+                    return new ServiceResult<string>(ResultType.Correct, jsonWebToken);
+                }
+                else
+                {
+                    return new ServiceResult<string>(ResultType.Unauthorized, new List<string> { "Kombinacja nazwy użytkownika oraz hasła jest niepoprawna!" });
+                }
+            }
+            else
+            {
+                return new ServiceResult<string>(ResultType.Unauthorized, new List<string> { "Kombinacja nazwy użytkownika oraz hasła jest niepoprawna!" });
             }
         }
 
