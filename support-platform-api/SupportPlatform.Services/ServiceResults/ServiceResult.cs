@@ -29,5 +29,7 @@ namespace SupportPlatform.Services
         {
             ReturnedObject = returnedObject;
         }
+
+        public ServiceResult(ResultType result, ICollection<string> errors): base(result, errors) {}
     }
 }
