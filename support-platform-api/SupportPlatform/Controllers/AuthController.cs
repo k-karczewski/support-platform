@@ -19,8 +19,7 @@ namespace SupportPlatform.Controllers
             _authService = authService;
         }
 
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(UserToRegisterDto userToRegister)
         {
             if(ModelState.IsValid)
@@ -48,11 +47,11 @@ namespace SupportPlatform.Controllers
 
                 if (loginResult.Result == ResultType.Correct)
                 {
-                    return Ok(loginResult.ReturnedObject);
+                    return Ok( new { username=userToLogin.Username, token = loginResult.ReturnedObject });
                 }
                 else
                 {
-                    return BadRequest(loginResult.Errors);
+                    return Unauthorized(loginResult.Errors);
                 }
             }
             else
