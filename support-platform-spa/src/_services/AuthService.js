@@ -1,4 +1,9 @@
+import { isExpired, decodeToken } from 'react-jwt';
+
 export default class AuthService {
+  constructor() {
+    this.token = localStorage.getItem('token');
+  }
 
   login = async (username, password) => {
     const userToLoginDto = {
@@ -24,7 +29,7 @@ export default class AuthService {
       }).then(data => {
         debugger
         if(result.succeeded) {
-          result.token = data.token;
+          this.token = data.token;
           localStorage.setItem('token', data.token);
           localStorage.setItem('username', data.username);
         } else {
@@ -64,5 +69,13 @@ export default class AuthService {
       });
 
       return result;
+    }
+
+    isUserLoggedIn = () => {
+      return this.token && !isExpired(this.token) ? true : false;
+    }
+
+    getDecodedToken = () => {
+      return this.token ? decodeToken(this.token) : null;
     }
   }
