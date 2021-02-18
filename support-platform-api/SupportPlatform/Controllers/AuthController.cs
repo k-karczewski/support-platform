@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SupportPlatform.Services;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,27 @@ namespace SupportPlatform.Controllers
             }
 
             return BadRequest();
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(UserToLoginDto userToLogin)
+        {
+            if (ModelState.IsValid)
+            {
+                IServiceResult<string> loginResult = await _authService.LoginAsync(userToLogin);
+
+                if (loginResult.Result == ResultType.Correct)
+                {
+                    return Ok(loginResult.ReturnedObject);
+                }
+                else
+                {
+                    return BadRequest(loginResult.Errors);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState.Values);
+            }
         }
 
         [HttpPost("ConfirmEmail")]
