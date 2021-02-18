@@ -27,7 +27,6 @@ export default class AuthService {
         }
         return response.json();
       }).then(data => {
-        debugger
         if(result.succeeded) {
           this.token = data.token;
           localStorage.setItem('token', data.token);
@@ -64,8 +63,10 @@ export default class AuthService {
           return response.json();
         }})
       .then(data => {
-        result.succeeded = false;
-        result.errors = data;       
+        if(data) {
+          result.succeeded = false;
+          result.errors = data;       
+        }
       });
 
       return result;
