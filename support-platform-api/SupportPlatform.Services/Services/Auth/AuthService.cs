@@ -33,7 +33,7 @@ namespace SupportPlatform.Services
         /// <param name="userToRegister">Data of new user</param>
         /// <param name="password">Password of new user</param>
         /// <returns>Result state</returns>
-        public async Task<IServiceResult> RegisterAsync(UserToRegisterDto userToRegister, IUrlHelper urlHelper)
+        public async Task<IServiceResult> RegisterAsync(UserToRegisterDto userToRegister)
         {
             try
             {
@@ -48,16 +48,13 @@ namespace SupportPlatform.Services
                     await AssignClientRole(user);
 
                     // send confirmation email
-                    await SendConfirmationEmail(user, urlHelper);
+                    await SendConfirmationEmail(user);
 
                     return new ServiceResult(ResultType.Correct);
                 }
 
                 // user registration failed - no user has been added to database
-                List<string> errors = new List<string>();
-                errors.AddRange(signUpResult.Errors.Select(x => x.Description));
-
-                return new ServiceResult(ResultType.Failed, errors);
+                return new ServiceResult(ResultType.Failed, GetErrorsFromResult(signUpResult));
             }
             catch(Exception e)
             {
@@ -72,6 +69,27 @@ namespace SupportPlatform.Services
 
                 return new ServiceResult(ResultType.Error, new List<string> { e.Message });
             }
+        }
+
+        public async Task<IServiceResult> ConfirmEmailAsync(AccountToConfirmDto accountToConfirm)
+        {
+            UserEntity user = await _signInManager.UserManager.FindByIdAsync(accountToConfirm.UserId);
+
+            if(user.EmailConfirmed == false)
+            {
+                string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(accountToConfirm.Token));
+
+                IdentityResult confirmationResult = await _signInManager.UserManager.ConfirmEmailAsync(user, decodedToken);
+
+                if (confirmationResult.Succeeded)
+                {
+                    return new ServiceResult(ResultType.Correct);
+                }
+
+                return new ServiceResult(ResultType.Failed, GetErrorsFromResult(confirmationResult));
+            }
+
+            return new ServiceResult(ResultType.Failed, new List<string> { "Ten adres email został już potwierdzony" });
         }
 
         private async Task AssignClientRole(UserEntity user)
@@ -93,24 +111,36 @@ namespace SupportPlatform.Services
         /// Sends email confirmation message to newly registered user using EmailSender class
         /// </summary>
         /// <param name="user">Newly registered user</param>
-        /// <param name="urlHelper">Url helper used for generating of confirmation link</param>
-        private async Task SendConfirmationEmail(UserEntity user, IUrlHelper urlHelper) 
+        private async Task SendConfirmationEmail(UserEntity user) 
         {
             // generate confitmation token for new user
             string confirmationToken = await _signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
             confirmationToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
 
             // create confirmation url which will be sent by email
-            // temporary link to client application
-            string callbackUrl = $"http://localhost:3000/?{user.Id}&{confirmationToken}";
-            //string callbackUrl2 = urlHelper.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = confirmationToken }, "https");
+            // get link to client application
+            string callbackUrl = GetCallbackUrl(user.Id, confirmationToken);
 
             // create email sender instance
-            using(var emailSender = new EmailSender(_configuration))
+            using (var emailSender = new EmailSender(_configuration))
             {
                 // send email
                 await emailSender.SendAccountConfirmation(user, callbackUrl);
             }
+        }
+
+        private List<string> GetErrorsFromResult(IdentityResult result)
+        {
+            List<string> errors = new List<string>();
+            errors.AddRange(result.Errors.Select(x => x.Description));
+
+            return errors;
+        }
+
+        private string GetCallbackUrl(int userId, string token)
+        {
+            string clientAppBaseUrl = _configuration.GetSection("ClientAppSettings:ClientAppUrl").Value;
+            return $"{clientAppBaseUrl}confirmInProgress?userId={userId}&token={token}";
         }
     }
 }

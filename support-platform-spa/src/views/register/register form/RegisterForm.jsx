@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import RegisterErrors from './RegisterErrors/RegisterErrors';
+import RegisterFormErrors from './register form errors/RegisterFormErrors';
 
-import './Register.sass';
+import './RegisterForm.sass';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -92,7 +92,7 @@ const Register = () => {
         </form>
       </div>
 
-      {formErrors.length > 0 && <RegisterErrors errors={formErrors} />}
+      {formErrors.length > 0 && <RegisterFormErrors errors={formErrors} />}
     </main>
 
   );

@@ -24,7 +24,7 @@ namespace SupportPlatform.Controllers
         {
             if(ModelState.IsValid)
             {
-                IServiceResult registrationResult = await _authService.RegisterAsync(userToRegister, Url);
+                IServiceResult registrationResult = await _authService.RegisterAsync(userToRegister);
 
                 if(registrationResult.Result == ResultType.Correct)
                 {
@@ -39,10 +39,26 @@ namespace SupportPlatform.Controllers
             return BadRequest();
         }
 
-        [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmailAsync(int userId, string token)
+        [HttpPost("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmailAsync(AccountToConfirmDto accountToConfirm)
         {
-            return Ok();
+            if(ModelState.IsValid)
+            {
+                IServiceResult confirmationResult = await _authService.ConfirmEmailAsync(accountToConfirm);
+
+                if(confirmationResult.Result == ResultType.Correct)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(confirmationResult.Errors);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState.Values);
+            }
         }
     }
 }

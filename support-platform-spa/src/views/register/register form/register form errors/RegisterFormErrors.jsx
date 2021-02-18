@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './RegisterErrors.sass'
+import './RegisterFormErrors.sass'
 
-const RegisterErrors = ({ errors }) => {
+const RegisterFormErrors = ({ errors }) => {
 
   const errorElements = errors.map(error => <li><p className="register__error">{error}</p></li>)
   return (
@@ -13,7 +13,6 @@ const RegisterErrors = ({ errors }) => {
       </ul>
     </aside>
   );
-
 }
 
-export default RegisterErrors;
+export default RegisterFormErrors;
