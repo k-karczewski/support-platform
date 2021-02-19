@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SupportPlatform.Database
 {
-    public class UserEntity : IdentityUser<int>
+    public class RoleEntity : IdentityRole<int>
     {
         public ICollection<UserRoleEntity> UserRoles { get; set; }
-        public ICollection<ReportEntity> Reports { get; set; }
-        public ICollection<ResponseEntity> Responses { get; set; }
     }
 }
