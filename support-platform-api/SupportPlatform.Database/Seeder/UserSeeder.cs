@@ -42,9 +42,12 @@ namespace SupportPlatform.Database
                         {
                             Name = roleName
                         });
+
+                        roleExist = true;
                     }
 
                     await userManager.AddToRoleAsync(user, roleName);
+                    await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
                 }
             }
         }
