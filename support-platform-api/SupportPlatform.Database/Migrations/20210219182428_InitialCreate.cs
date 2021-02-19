@@ -8,7 +8,7 @@ namespace SupportPlatform.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -19,7 +19,7 @@ namespace SupportPlatform.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,9 +41,7 @@ namespace SupportPlatform.Database.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    Firstname = table.Column<string>(nullable: true),
-                    Lastname = table.Column<string>(nullable: true)
+                    AccessFailedCount = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,9 +62,9 @@ namespace SupportPlatform.Database.Migrations
                 {
                     table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        name: "FK_AspNetRoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -123,9 +121,9 @@ namespace SupportPlatform.Database.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_AspNetUserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -233,13 +231,6 @@ namespace SupportPlatform.Database.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId");
@@ -273,6 +264,13 @@ namespace SupportPlatform.Database.Migrations
                 name: "IX_Responses_UserId",
                 table: "Responses",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "Roles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -311,7 +309,7 @@ namespace SupportPlatform.Database.Migrations
                 name: "Responses");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Reports");
