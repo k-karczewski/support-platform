@@ -16,11 +16,11 @@ namespace SupportPlatform.Services
     public class AuthService : IAuthService
     {
         private readonly SignInManager<UserEntity> _signInManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly RoleManager<RoleEntity> _roleManager;
         private readonly UserEntityMapper _userMapper;
         private readonly IConfiguration _configuration;
 
-        public AuthService(SignInManager<UserEntity> signInManager, RoleManager<IdentityRole<int>> roleManager, UserEntityMapper userMapper, IConfiguration configuration)
+        public AuthService(SignInManager<UserEntity> signInManager, RoleManager<RoleEntity> roleManager, UserEntityMapper userMapper, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -127,7 +127,7 @@ namespace SupportPlatform.Services
 
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
-                await _roleManager.CreateAsync(new IdentityRole<int>
+                await _roleManager.CreateAsync(new RoleEntity
                 {
                     Name = roleName
                 });
