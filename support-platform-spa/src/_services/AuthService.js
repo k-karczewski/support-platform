@@ -1,4 +1,6 @@
 import { isExpired, decodeToken } from 'react-jwt';
+import store from '../_redux/stores/ApplicationStore';
+import { clearUserDataAction, saveUserDataAction } from '../_redux/actions/AuthActions';
 
 export default class AuthService {
   constructor() {
@@ -28,9 +30,10 @@ export default class AuthService {
         return response.json();
       }).then(data => {
         if(result.succeeded) {
-          this.token = data.token;
           localStorage.setItem('token', data.token);
           localStorage.setItem('username', data.username);
+          const decodedToken = decodeToken(data.token);
+          store.dispatch(saveUserDataAction(data.username, decodedToken));
         } else {
           result.errors = data;
         }
@@ -56,7 +59,6 @@ export default class AuthService {
       body: JSON.stringify(userToRegisterDto),
     })
       .then(response => {
-        debugger
         if (response.ok) {
           result.succeeded = true;
         } else {
@@ -76,7 +78,28 @@ export default class AuthService {
       return this.token && !isExpired(this.token) ? true : false;
     }
 
-    getDecodedToken = () => {
-      return this.token ? decodeToken(this.token) : null;
+    initializeStore = () => {
+      const token = localStorage.getItem('token');
+      const username = localStorage.getItem('username');
+
+      if(username && token) {
+        store.dispatch(saveUserDataAction(username, decodeToken(token)));
+        return true;
+      } else {
+        localStorage.removeItem('username');
+        localStorage.removeItem('token');
+        return false;
+      }
     }
+
+    logout = () => {
+      // TODO: Send request to api?
+      store.dispatch(clearUserDataAction());
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+    }
+
+    // getDecodedToken = () => {
+    //   return store.getState().decodedToken;
+    // }
   }
