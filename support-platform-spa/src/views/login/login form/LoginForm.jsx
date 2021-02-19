@@ -32,7 +32,8 @@ const LoginForm = () => {
     if (username && password) {
       const result = await authService.login(username, password);
       if (result.succeeded) {
-        history.push('/'); // push to view for logged in user
+        // push to view for logged in user
+        history.push('/'); 
       } else {
         // show error message
         setFormErrors(result.errors);
