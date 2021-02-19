@@ -48,11 +48,11 @@ namespace SupportPlatform
                 options.SignIn.RequireConfirmedAccount = true;
             }).AddErrorDescriber<CustomIdentityErrorDescriber>(); ;
 
-            identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole<int>), identityBuilder.Services);
+            identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(RoleEntity), identityBuilder.Services);
             identityBuilder.AddEntityFrameworkStores<SupportPlatformDbContext>().AddDefaultTokenProviders();
             identityBuilder.AddUserManager<UserManager<UserEntity>>();
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
-            identityBuilder.AddRoleManager<RoleManager<IdentityRole<int>>>();
+            identityBuilder.AddRoleManager<RoleManager<RoleEntity>>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -70,7 +70,7 @@ namespace SupportPlatform
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -90,9 +90,6 @@ namespace SupportPlatform
             {
                 endpoints.MapControllers();
             });
-
-            var db = serviceProvider.GetService<SupportPlatformDbContext>();
-            db.Database.Migrate();
         }
     }
 }

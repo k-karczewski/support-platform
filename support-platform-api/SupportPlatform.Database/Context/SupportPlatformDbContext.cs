@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SupportPlatform.Database
 {
-    public class SupportPlatformDbContext : IdentityDbContext<UserEntity, IdentityRole<int>, int>
+    public class SupportPlatformDbContext : IdentityDbContext<UserEntity, RoleEntity, int, IdentityUserClaim<int>, UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DbSet<ReportEntity> Reports { get; set; }
         public DbSet<ResponseEntity> Responses { get; set; }
@@ -36,7 +36,14 @@ namespace SupportPlatform.Database
                 entity.HasOne(r => r.Report).WithMany(m => m.ModificationEntries).HasForeignKey(k => k.ReportId);
             });
 
+            builder.Entity<UserRoleEntity>(entity =>
+            {
+                entity.HasOne(u => u.User).WithMany(ur => ur.UserRoles).HasForeignKey(k => k.UserId);
+                entity.HasOne(r => r.Role).WithMany(ur => ur.UserRoles).HasForeignKey(k => k.RoleId);
+            });
+
             builder.Entity<UserEntity>().ToTable("Users");
+            builder.Entity<RoleEntity>().ToTable("Roles");
         }
     }
 }
