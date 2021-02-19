@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
+
 import HttpService from '../../../../_services/HttpService';
+
+import { apiUrl } from '../../../../_environments/environment';
 
 import './ConfirmationInProgress.sass';
 
@@ -21,7 +24,7 @@ const ConfirmationInProgress = () => {
 
       const http = new HttpService();
 
-      http.sendRequest('https://localhost:44339/api/auth/confirmEmail', 'POST', data)
+      http.sendRequest(`${apiUrl}/auth/confirmEmail`, 'POST', data)
         .then(response => {
           if (!response.ok) {
             throw response.json();
