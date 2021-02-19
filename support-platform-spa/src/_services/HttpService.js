@@ -1,7 +1,7 @@
 import AuthService from "./AuthService"
 
 export default class HttpService {
-  sendRequest = async (url, method, data) => {
+  sendRequest = (url, method, data) => {
     const authService = new AuthService();
     const authorizationToken = authService.isUserLoggedIn() ? `Bearer ${authService.token}` : '';
 
