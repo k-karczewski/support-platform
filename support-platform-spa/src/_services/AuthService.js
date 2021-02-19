@@ -1,10 +1,13 @@
-import { isExpired, decodeToken } from 'react-jwt';
-import store from '../_redux/stores/ApplicationStore';
 import { clearUserDataAction, saveUserDataAction } from '../_redux/actions/AuthActions';
+import store from '../_redux/stores/ApplicationStore';
+import HttpService from './HttpService';
+import { isExpired, decodeToken } from 'react-jwt';
+import { apiUrl } from '../_environments/environment';
 
 export default class AuthService {
   constructor() {
     this.token = localStorage.getItem('token');
+    this.http = new HttpService();
   }
 
   login = async (username, password) => {
@@ -14,13 +17,8 @@ export default class AuthService {
     }
 
     const result = {}
-    await fetch('https://localhost:44339/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userToLoginDto),
-    })
+
+    await this.http.sendRequest(`${apiUrl}/api/auth/login`, 'POST', userToLoginDto)
       .then(response => {
         if(response.ok) {
           result.succeeded = true;
@@ -51,13 +49,7 @@ export default class AuthService {
 
     const result = {}
 
-    await fetch('https://localhost:44339/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userToRegisterDto),
-    })
+    await this.http.sendRequest(`${apiUrl}/api/auth/register`, 'POST', userToRegisterDto)
       .then(response => {
         if (response.ok) {
           result.succeeded = true;
@@ -93,13 +85,8 @@ export default class AuthService {
     }
 
     logout = () => {
-      // TODO: Send request to api?
       store.dispatch(clearUserDataAction());
       localStorage.removeItem('username');
       localStorage.removeItem('token');
     }
-
-    // getDecodedToken = () => {
-    //   return store.getState().decodedToken;
-    // }
   }
