@@ -37,7 +37,7 @@ const Register = () => {
     if (username && email && password && confirmPassword && (password === confirmPassword)) {
       const authService = new AuthService();
       const result = await authService.register(username, email, password, confirmPassword);
-      debugger
+      
       if (result.succeeded) {
         history.push('/accountCreated');
       } else {
