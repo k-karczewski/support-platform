@@ -18,7 +18,7 @@ export default class AuthService {
 
     const result = {}
 
-    await this.http.sendRequest(`${apiUrl}/api/auth/login`, 'POST', userToLoginDto)
+    await this.http.sendRequest(`${apiUrl}/auth/login`, 'POST', userToLoginDto)
       .then(response => {
         if(response.ok) {
           result.succeeded = true;
@@ -49,7 +49,7 @@ export default class AuthService {
 
     const result = {}
 
-    await this.http.sendRequest(`${apiUrl}/api/auth/register`, 'POST', userToRegisterDto)
+    await this.http.sendRequest(`${apiUrl}/auth/register`, 'POST', userToRegisterDto)
       .then(response => {
         if (response.ok) {
           result.succeeded = true;
@@ -88,5 +88,9 @@ export default class AuthService {
       store.dispatch(clearUserDataAction());
       localStorage.removeItem('username');
       localStorage.removeItem('token');
+    }
+
+    getDecodedToken = () => {
+      return store.getState().authStates.decodedToken;
     }
   }
