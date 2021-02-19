@@ -69,7 +69,7 @@ namespace SupportPlatform
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -89,9 +89,6 @@ namespace SupportPlatform
             {
                 endpoints.MapControllers();
             });
-
-           var db = serviceProvider.GetService<SupportPlatformDbContext>();
-            db.Database.Migrate();
         }
     }
 }
