@@ -47,11 +47,11 @@ namespace SupportPlatform
                 options.SignIn.RequireConfirmedAccount = true;
             });
 
-            identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole<int>), identityBuilder.Services);
+            identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(RoleEntity), identityBuilder.Services);
             identityBuilder.AddEntityFrameworkStores<SupportPlatformDbContext>().AddDefaultTokenProviders();
             identityBuilder.AddUserManager<UserManager<UserEntity>>();
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
-            identityBuilder.AddRoleManager<RoleManager<IdentityRole<int>>>();
+            identityBuilder.AddRoleManager<RoleManager<RoleEntity>>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -90,7 +90,7 @@ namespace SupportPlatform
                 endpoints.MapControllers();
             });
 
-            var db = serviceProvider.GetService<SupportPlatformDbContext>();
+           var db = serviceProvider.GetService<SupportPlatformDbContext>();
             db.Database.Migrate();
         }
     }
