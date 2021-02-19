@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SupportPlatform.Database;
+using SupportPlatform.Helpers;
 using SupportPlatform.Services;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace SupportPlatform
                 options.Password.RequireUppercase = false;
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedAccount = true;
-            });
+            }).AddErrorDescriber<CustomIdentityErrorDescriber>(); ;
 
             identityBuilder = new IdentityBuilder(identityBuilder.UserType, typeof(IdentityRole<int>), identityBuilder.Services);
             identityBuilder.AddEntityFrameworkStores<SupportPlatformDbContext>().AddDefaultTokenProviders();
