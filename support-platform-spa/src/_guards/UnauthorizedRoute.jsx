@@ -6,7 +6,7 @@ const UnauthorizedRoute = ({ component: Component, authCondition, ...rest }) => 
     <Route {...rest} render={(props) => (
       authCondition() === false
         ? <Component {...props} />
-        : <Redirect to='/dashboard' />
+        : <Redirect to='/reports' />
     )} />
   )
 }

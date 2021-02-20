@@ -8,7 +8,7 @@ const EmployeeRoute = ({ component: Component, isAuthenticated, role, ...rest })
         if (role() === 'Employee') {
           return <Component {...props} />
         } else {
-          return <Redirect to='/dashboard' />
+          return <Redirect to='/reports' />
         }
       }
       else {
