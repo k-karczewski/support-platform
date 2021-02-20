@@ -9,6 +9,7 @@ namespace SupportPlatform.Database
         public DbSet<ReportEntity> Reports { get; set; }
         public DbSet<ResponseEntity> Responses { get; set; }
         public DbSet<ModificationEntryEntity> ModificationEntries { get; set; }
+        public DbSet<AttachmentEntity> Attachments { get; set; }
 
         public SupportPlatformDbContext(DbContextOptions options) : base(options) { }
 
@@ -20,7 +21,6 @@ namespace SupportPlatform.Database
             {
                 entity.HasKey(k => k.Id);
                 entity.HasOne(u => u.User).WithMany(r => r.Reports).HasForeignKey(k => k.UserId);
-
             });
 
             builder.Entity<ResponseEntity>(entity =>
