@@ -4,6 +4,7 @@ import AuthService from '../../../_services/AuthService';
 
 import FormHeader from '../../../components/forms/form header/FormHeader';
 import FormTextInput from '../../../components/forms/form text input/FormTextInput';
+import FormSubmitButton from '../../../components/forms/form submit button/FormSubmitButton';
 import LoginFormErrors from './login form errors/LoginFormErrors';
 
 import './LoginForm.sass';
@@ -56,7 +57,7 @@ const LoginForm = () => {
         <form className="login__form" method="post" onSubmit={handleSubmit}>
           <FormTextInput labelText="Nazwa użytkownika" htmlFor="username" type="text" onChangeHandler={handleInputsValueChange} />
           <FormTextInput labelText="Hasło" htmlFor="password" type="password" onChangeHandler={handleInputsValueChange} />
-          <button type="submit" className="form__submit">Zaloguj się</button>
+          <FormSubmitButton text="Zaloguj się" />
           <Link to="/register" className="form__registerLink">Nie masz jeszcze konta? Zarejestruj się!</Link>
         </form>
       </div>
