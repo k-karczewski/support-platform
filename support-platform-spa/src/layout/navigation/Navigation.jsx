@@ -4,10 +4,39 @@ import AuthService from '../../_services/AuthService';
 
 import './Navigation.sass';
 
-const Navigation = ({ userLoggedIn }) => {
+const Navigation = ({ decodedToken }) => {
   const handleLogout = () => {
     const authService = new AuthService();
     authService.logout();
+  }
+
+  const generateNavLinks = () => {
+    debugger
+    if (!decodedToken) {
+      return (<>
+        <li className="nav__link">
+          <NavLink to="/login">Zaloguj się</NavLink>
+        </li>
+        <li className="nav__link">
+          <NavLink to="/register">Zarejestruj się</NavLink>
+        </li>
+      </>)
+    } else if (decodedToken.role === 'Client') {
+      return (<>
+        <li className="nav__link">
+          <NavLink to="/reports/create">Stwórz zgłoszenie</NavLink>
+        </li>
+        <li className="nav__link">
+          <NavLink to="/" onClick={handleLogout}>Wyloguj się</NavLink>
+        </li>
+      </>)
+    } else {
+      return (
+        <li className="nav__link">
+          <NavLink to="/" onClick={handleLogout}>Wyloguj się</NavLink>
+        </li>
+      )
+    }
   }
 
   return (
@@ -16,18 +45,8 @@ const Navigation = ({ userLoggedIn }) => {
         <NavLink to="/">Support Platform</NavLink>
       </div>
       <ul className="nav__links">
-        {!userLoggedIn ?
-          <>
-            <li className="nav__link">
-              <NavLink to="/login">Zaloguj się</NavLink>
-            </li>
-            <li className="nav__link">
-              <NavLink to="/register">Zarejestruj się</NavLink>
-            </li>
-          </> :
-          <li className="nav__link">
-            <NavLink to="/" onClick={handleLogout}>Wyloguj się</NavLink>
-          </li>
+        {
+          generateNavLinks()
         }
       </ul>
     </nav>
