@@ -11,7 +11,6 @@ const Navigation = ({ decodedToken }) => {
   }
 
   const generateNavLinks = () => {
-    debugger
     if (!decodedToken) {
       return (<>
         <li className="nav__link">
