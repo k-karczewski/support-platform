@@ -16,5 +16,7 @@ namespace SupportPlatform.Database
 
         public List<ResponseEntity> Responses { get; set; }
         public List<ModificationEntryEntity> ModificationEntries { get; set; }
+
+        public AttachmentEntity Attachment { get; set; }
     }
 }
