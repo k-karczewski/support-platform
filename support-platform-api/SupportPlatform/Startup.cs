@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SupportPlatform.Database;
+using SupportPlatform.Database.Repositories;
 using SupportPlatform.Helpers;
 using SupportPlatform.Services;
 using System;
@@ -35,6 +36,9 @@ namespace SupportPlatform
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<ICloudinaryManager, CloudinaryManager>();
             services.AddScoped<UserEntityMapper>();
 
             services.AddControllers().AddNewtonsoftJson();
