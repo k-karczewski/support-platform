@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import HttpService from '../../../_services/HttpService';
+import { apiUrl } from '../../../_environments/environment';
+
 import FormHeader from '../../forms/form header/FormHeader';
 import FormTextInput from '../../forms/form text input/FormTextInput'
 import FormTextAreaInput from '../../forms/form textarea input/FormTextAreaInput';
@@ -27,7 +30,14 @@ const CreateReportForm = () => {
       fileInBytes
     }
 
-    console.log(reportToCreate)
+    const http = new HttpService();
+
+    http.sendRequest(`${apiUrl}/report/create`, 'POST', reportToCreate)
+      .then(response => {
+        // handle resonse
+        // if status correct redirect to reports list
+        // show errors otherwise
+      });
   }
 
   const handleTextInputs = event => {
@@ -71,29 +81,7 @@ const CreateReportForm = () => {
           <FormTextAreaInput htmlFor="message" labelText="Opis zgłoszenia" onChangeHandler={handleTextInputs} />
           <input type="file" name="fileInput" id="fileInput" accept=".png, .jpg, .pdf" multiple={false} onChange={handleFileInput} />
           <FormSubmitButton text="Wyślij zgłoszenie" />
-          {/* <FormTextInput type="text" htmlFor="message" labelText="Opis problemu" /> */}
-
-
         </form>
-
-
-
-
-        {/* <form className="login__form" method="post" onSubmit={handleSubmit}>
-          <label htmlFor="username">
-            Nazwa użytkownika
-          <input type="text" id="username" onChange={handleInputsValueChange} />
-          </label>
-          <label htmlFor="password">
-            Hasło
-          <input type="password" id="password" onChange={handleInputsValueChange} />
-          </label>
-          <button type="submit" className="form__submit">Zaloguj się</button>
-          <Link to="/register" className="form__registerLink">Nie masz jeszcze konta? Zarejestruj się!</Link>
-        </form>
-      </div>
-
-      {formErrors.length > 0 && <LoginFormErrors errors={formErrors} />} */}
       </div>
     </main>
   );
