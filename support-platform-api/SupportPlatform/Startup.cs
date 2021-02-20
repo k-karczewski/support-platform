@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,7 +37,7 @@ namespace SupportPlatform
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<UserEntityMapper>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddDbContext<SupportPlatformDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             IdentityBuilder identityBuilder = services.AddIdentityCore<UserEntity>(options => {
@@ -66,6 +67,19 @@ namespace SupportPlatform
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireClientRole", policy =>
+                {
+                   policy.RequireRole("Client");
+                });
+
+                options.AddPolicy("RequireEmployeeRole", policy =>
+                {
+                    policy.RequireRole("Employee");
+                });
             });
         }
 
