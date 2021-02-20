@@ -91,6 +91,8 @@ export default class AuthService {
     }
 
     getDecodedToken = () => {
-      return store.getState().authStates.decodedToken;
+      return this.isUserLoggedIn() && store.getState().authStates.decodedToken ? 
+                  store.getState().authStates.decodedToken : 
+                  decodeToken(this.token);
     }
   }
