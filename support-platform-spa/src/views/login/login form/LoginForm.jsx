@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import AuthService from '../../../_services/AuthService';
+
+import FormHeader from '../../../components/forms/form header/FormHeader';
 import LoginFormErrors from './login form errors/LoginFormErrors';
 
 import './LoginForm.sass';
@@ -10,6 +12,11 @@ const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [formErrors, setFormErrors] = useState([]);
+
+  const headerText = {
+    heading: 'Zaloguj się',
+    description: 'Wpisz swoje dane aby się zalogować!'
+  }
 
   const handleInputsValueChange = (event) => {
     switch (event.target.id) {
@@ -33,7 +40,7 @@ const LoginForm = () => {
       const result = await authService.login(username, password);
       if (result.succeeded) {
         // push to view for logged in user
-        history.push('/'); 
+        history.push('/');
       } else {
         // show error message
         setFormErrors(result.errors);
@@ -44,10 +51,7 @@ const LoginForm = () => {
   return (
     <main className="login">
       <div className="container">
-        <header className="form__header">
-          <h2 className="form__heading">Zaloguj się</h2>
-          <p className="form__text">Wpisz swoje dane aby się zalogować!</p>
-        </header>
+        <FormHeader heading={headerText.heading} description={headerText.description} />
         <form className="login__form" method="post" onSubmit={handleSubmit}>
           <label htmlFor="username">
             Nazwa użytkownika
