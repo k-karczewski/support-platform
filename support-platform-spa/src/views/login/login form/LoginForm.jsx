@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import AuthService from '../../../_services/AuthService';
 
 import FormHeader from '../../../components/forms/form header/FormHeader';
+import FormTextInput from '../../../components/forms/form text input/FormTextInput';
 import LoginFormErrors from './login form errors/LoginFormErrors';
 
 import './LoginForm.sass';
@@ -53,14 +54,8 @@ const LoginForm = () => {
       <div className="container">
         <FormHeader heading={headerText.heading} description={headerText.description} />
         <form className="login__form" method="post" onSubmit={handleSubmit}>
-          <label htmlFor="username">
-            Nazwa użytkownika
-          <input type="text" id="username" onChange={handleInputsValueChange} />
-          </label>
-          <label htmlFor="password">
-            Hasło
-          <input type="password" id="password" onChange={handleInputsValueChange} />
-          </label>
+          <FormTextInput labelText="Nazwa użytkownika" htmlFor="username" type="text" onChangeHandler={handleInputsValueChange} />
+          <FormTextInput labelText="Hasło" htmlFor="password" type="password" onChangeHandler={handleInputsValueChange} />
           <button type="submit" className="form__submit">Zaloguj się</button>
           <Link to="/register" className="form__registerLink">Nie masz jeszcze konta? Zarejestruj się!</Link>
         </form>
