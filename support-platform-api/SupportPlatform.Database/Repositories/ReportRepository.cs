@@ -14,12 +14,12 @@ namespace SupportPlatform.Database.Repositories
 
         public async Task<ICollection<ReportEntity>> GetAllReports()
         {
-            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).ToListAsync();
+            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).Include(a => a.Attachment).ToListAsync();
         }
 
         public async Task<ReportEntity> GetReportById(int id)
         {
-            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).Include(a => a.Attachment).FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
