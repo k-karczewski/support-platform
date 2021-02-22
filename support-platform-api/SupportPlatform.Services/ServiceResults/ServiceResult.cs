@@ -25,6 +25,8 @@ namespace SupportPlatform.Services
     {
         public ReturnType ReturnedObject { get; set; }
 
+        public ServiceResult(ResultType result) : base(result) { }
+
         public ServiceResult(ResultType result, ReturnType returnedObject) : base(result)
         {
             ReturnedObject = returnedObject;
