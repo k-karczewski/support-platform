@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SupportPlatform.Services
 {
@@ -22,6 +23,11 @@ namespace SupportPlatform.Services
             };
 
             _cloudinary = new Cloudinary(account);
+        }
+
+        public async Task DeleteFileAsync(string publicId)
+        {
+            await _cloudinary.DeleteResourcesAsync(publicId);
         }
 
         public string UploadFile(FileToUploadDto fileToUpload, int userId)
