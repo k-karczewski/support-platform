@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SupportPlatform.Database;
 
 namespace SupportPlatform.Database.Migrations
 {
     [DbContext(typeof(SupportPlatformDbContext))]
-    partial class SupportPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210222175531_FixedDateInReportsTable")]
+    partial class FixedDateInReportsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

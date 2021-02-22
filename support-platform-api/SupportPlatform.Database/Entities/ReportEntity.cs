@@ -9,7 +9,7 @@ namespace SupportPlatform.Database
         public string Heading { get; set; }
         public string Message { get; set; }
         public StatusEnum Status { get; set; }
-        public DateTime Date => DateTime.Now;
+        public DateTime Date { get; set; }
 
         public int UserId { get; set; }
         public UserEntity User { get; set; }
