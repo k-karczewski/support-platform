@@ -40,6 +40,7 @@ namespace SupportPlatform
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<ICloudinaryManager, CloudinaryManager>();
             services.AddScoped<UserEntityMapper>();
+            services.AddScoped<ReportEntityMapper>();
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddDbContext<SupportPlatformDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
