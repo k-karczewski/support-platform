@@ -23,8 +23,8 @@ namespace SupportPlatform.Controllers
         }
 
 
-        [HttpGet(Name = "GetReportForClient")]
         [Authorize(Policy = "RequireClientRole")]
+        [HttpGet("{id}", Name = "GetReportForClient")]
         public async Task<IActionResult> GetReportForClientAsync(int id)
         {
             if(ModelState.IsValid)
