@@ -5,9 +5,9 @@ import AuthService from '../../../_services/AuthService';
 import FormHeader from '../../../components/forms/form header/FormHeader';
 import FormTextInput from '../../../components/forms/form text input/FormTextInput';
 import FormSubmitButton from '../../../components/forms/form submit button/FormSubmitButton';
-import RegisterFormErrors from './register form errors/RegisterFormErrors';
 
 import './RegisterForm.sass';
+import FormErrorsPanel from '../../../components/forms/form errors panel/FormErrorsPanel';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -68,7 +68,7 @@ const Register = () => {
         </form>
       </div>
 
-      {formErrors.length > 0 && <RegisterFormErrors errors={formErrors} />}
+      {formErrors.length > 0 && <FormErrorsPanel errors={formErrors} />}
     </main>
   );
 }

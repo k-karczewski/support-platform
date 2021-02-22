@@ -5,9 +5,9 @@ import AuthService from '../../../_services/AuthService';
 import FormHeader from '../../../components/forms/form header/FormHeader';
 import FormTextInput from '../../../components/forms/form text input/FormTextInput';
 import FormSubmitButton from '../../../components/forms/form submit button/FormSubmitButton';
-import LoginFormErrors from './login form errors/LoginFormErrors';
 
 import './LoginForm.sass';
+import FormErrorsPanel from '../../../components/forms/form errors panel/FormErrorsPanel';
 
 const LoginForm = () => {
   const history = useHistory();
@@ -62,7 +62,7 @@ const LoginForm = () => {
         </form>
       </div>
 
-      {formErrors.length > 0 && <LoginFormErrors errors={formErrors} />}
+      {formErrors.length > 0 && <FormErrorsPanel errors={formErrors} />}
     </main>
   );
 }
