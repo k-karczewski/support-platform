@@ -7,6 +7,6 @@ namespace SupportPlatform.Services
     public class ResponseToReturnDto
     {
         public string Message { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
     }
 }
