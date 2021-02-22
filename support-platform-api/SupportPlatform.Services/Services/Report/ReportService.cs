@@ -31,7 +31,7 @@ namespace SupportPlatform.Services
             {
                 ReportEntity report = await _repository.GetReportById(reportId);
                     
-                if(report.UserId == userId)
+                if(report != null && report.UserId == userId)
                 {
                     ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
 
@@ -75,7 +75,7 @@ namespace SupportPlatform.Services
                 {
                     ReportEntity report = CreateReport(reportToCreate, userId, user.UserName);
 
-                    if (reportToCreate.File != null)
+                    if (reportToCreate.File.Filename != null && reportToCreate.File.FileInBytes != null)
                     {
                         string attachmentUrl = _cloudinaryManager.UploadFile(reportToCreate.File, userId);
 
@@ -125,11 +125,13 @@ namespace SupportPlatform.Services
             {
                 Heading = reportData.Heading,
                 Message = reportData.Message,
+                Date = DateTime.Now,
                 ModificationEntries = new List<ModificationEntryEntity>
                     {
                         new ModificationEntryEntity
                         {
-                            Message = $"Klient {username} stworzył/a nowe zgłoszenie tytule: '{reportData.Heading}'"
+                            Message = $"Klient {username} stworzył/a nowe zgłoszenie tytule: '{reportData.Heading}'",
+                            Date = DateTime.Now
                         }
                     },
                 Status = StatusEnum.New,
