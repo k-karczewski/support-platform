@@ -9,11 +9,13 @@ import FormTextAreaInput from '../../forms/form textarea input/FormTextAreaInput
 import FormSubmitButton from '../../forms/form submit button/FormSubmitButton';
 
 import './CreateReportForm.sass';
+import FormErrorsPanel from '../../forms/form errors panel/FormErrorsPanel';
 
 const CreateReportForm = () => {
   const [heading, setHeading] = useState('');
   const [message, setMessage] = useState('');
-  const [fileInBytes, setFileInBytes] = useState([]);
+  const [file, setFile] = useState({});
+  const [formErrors, setFormErrors] = useState([]);
 
 
   const headerText = {
@@ -21,23 +23,49 @@ const CreateReportForm = () => {
     description: 'Wypełnij formularz by wysłać zgłoszenie'
   }
 
+  const formIsValid = () => {
+    const errorList = [];
+
+    if (heading.length === 0) {
+      errorList.push("Proszę wypełnić tytuł zgłoszenia");
+    }
+    if (message.length === 0) {
+      errorList.push("Proszę wypełnić wiadomość zgłoszenia");
+    }
+
+    setFormErrors(errorList);
+    return errorList.length === 0 ? true : false;
+  }
+
   const handleFormSubmit = event => {
     event.preventDefault();
 
-    const reportToCreate = {
-      heading,
-      message,
-      fileInBytes
+
+    if (formIsValid()) {
+      const reportToCreate = {
+        heading,
+        message,
+        file
+      }
+
+      const http = new HttpService();
+
+      http.sendRequest(`${apiUrl}/report/create`, 'POST', reportToCreate)
+        .then(async response => {
+          const json = await response.json();
+
+          if (response.ok) {
+            return json;
+          }
+          return Promise.reject(json);
+        }).then(data => {
+          //redirect to details page
+
+        })
+        .catch(errors => {
+          setFormErrors(errors)
+        });
     }
-
-    const http = new HttpService();
-
-    http.sendRequest(`${apiUrl}/report/create`, 'POST', reportToCreate)
-      .then(response => {
-        // handle resonse
-        // if status correct redirect to reports list
-        // show errors otherwise
-      });
   }
 
   const handleTextInputs = event => {
@@ -69,7 +97,12 @@ const CreateReportForm = () => {
         }
       }
     }
-    setFileInBytes(fileByteArray);
+    const file = {
+      filename: files[0].name,
+      fileInBytes: fileByteArray
+    }
+
+    setFile(file);
   }
 
   return (
@@ -83,6 +116,7 @@ const CreateReportForm = () => {
           <FormSubmitButton text="Wyślij zgłoszenie" />
         </form>
       </div>
+      {formErrors.length > 0 ? <FormErrorsPanel errors={formErrors} /> : null}
     </main>
   );
 }
