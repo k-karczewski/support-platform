@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import HttpService from '../../../_services/HttpService';
 import { apiUrl } from '../../../_environments/environment';
@@ -16,6 +17,7 @@ const CreateReportForm = () => {
   const [message, setMessage] = useState('');
   const [file, setFile] = useState({});
   const [formErrors, setFormErrors] = useState([]);
+  const history = useHistory();
 
 
   const headerText = {
@@ -59,8 +61,12 @@ const CreateReportForm = () => {
           }
           return Promise.reject(json);
         }).then(data => {
-          //redirect to details page
-
+          history.push({
+            pathname: `/reports/details/${data.id}`,
+            state: {
+              data
+            }
+          })
         })
         .catch(errors => {
           setFormErrors(errors)
