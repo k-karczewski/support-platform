@@ -11,10 +11,13 @@ namespace SupportPlatform.Services
         {
             _mapper = new MapperConfiguration(config =>
             {
-                config.CreateMap<ReportDetailsToReturnDto, ReportEntity>().ReverseMap();
+                config.CreateMap<ReportDetailsToReturnDto, ReportEntity>().ReverseMap()
+                            .ForMember(dest => dest.Date, opt => opt.MapFrom(y => y.Date.ToString("dd/MM/yyyy HH:mm:ss")))
+                            .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(y => y.User.UserName));
+
                 config.CreateMap<AttachmentToReturnDto, AttachmentEntity>().ReverseMap();
-                config.CreateMap<ResponseToReturnDto, ResponseEntity>().ReverseMap();
-                config.CreateMap<ModificationEntryToReturnDto, ModificationEntryEntity>().ReverseMap();
+                config.CreateMap<ResponseToReturnDto, ResponseEntity>().ReverseMap().ForMember(dest => dest.Date, opt => opt.MapFrom(y => y.Date.ToString("dd/MM/yyyy HH:mm:ss")));
+                config.CreateMap<ModificationEntryToReturnDto, ModificationEntryEntity>().ReverseMap().ForMember(dest => dest.Date, opt => opt.MapFrom(y => y.Date.ToString("dd/MM/yyyy HH:mm:ss"))); ;
             }).CreateMapper();
         }
 
