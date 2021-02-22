@@ -19,7 +19,7 @@ namespace SupportPlatform.Database.Repositories
 
         public async Task<ReportEntity> GetReportById(int id)
         {
-            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).Include(a => a.Attachment).FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).Include(a => a.Attachment).Include(u => u.User).FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
