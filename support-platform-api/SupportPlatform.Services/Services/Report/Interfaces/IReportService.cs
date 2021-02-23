@@ -8,7 +8,8 @@ namespace SupportPlatform.Services
 {
     public interface IReportService
     {
-        Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsForClientAsync(int reportId, int userId);
+        Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsAsync(int reportId, int userId);
         Task<IServiceResult<ReportDetailsToReturnDto>> CreateAsync(ReportToCreateDto reportToCreate, int userId);
+        Task<IServiceResult<ReportListToReturnDto>> GetReportList(ReportListOptionsDto options, int userId);
     }
 }

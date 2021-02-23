@@ -24,46 +24,37 @@ namespace SupportPlatform.Services
             _reportMapper = reportEntity;
         }
 
-
-        public async Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsForClientAsync(int reportId, int userId)
+        public async Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsAsync(int reportId, int userId)
         {
             try
             {
-                ReportEntity report = await _repository.GetReportById(reportId);
-                    
-                if(report != null && report.UserId == userId)
-                {
-                    ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
+                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
 
-                    return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
-                }
-                else
+                if (user != null)
                 {
-                    return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
+                    string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
+
+                    ReportEntity report = await _repository.GetReportById(reportId);
+                
+                    if(report != null)
+                    {
+                        ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
+
+                        if(userRole == "Client" && report.UserId != userId)
+                        {
+                            return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
+                        }
+
+                        return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
+                    }
                 }
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
             }
             catch(Exception)
             {
                 return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas pobierania zgłoszenia" });
             }
         }
-
-        public async Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsForEmployeeAsync(int reportId)
-        {
-            try
-            {
-                ReportEntity report = await _repository.GetReportById(reportId);
-
-                ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
-
-                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
-            }
-            catch (Exception)
-            {
-                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas pobierania zgłoszenia" });
-            }
-        }
-
 
         public async Task<IServiceResult<ReportDetailsToReturnDto>> CreateAsync(ReportToCreateDto reportToCreate, int userId)
         {
@@ -139,6 +130,49 @@ namespace SupportPlatform.Services
             };
 
             return report;
+        }
+
+        public async Task<IServiceResult<ReportListToReturnDto>> GetReportList(ReportListOptionsDto options, int userId)
+        {
+            try
+            {
+                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
+
+                if(user != null)
+                {
+                    string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
+
+                    ICollection<ReportEntity> reports;
+
+                    if (userRole == "Client")
+                    {
+                        reports = await _repository.GetReportsForClient(options.PageNumber, options.ItemsPerPage, options.ReportStatus, userId);
+                    }
+                    else
+                    {
+                        reports = await _repository.GetReportsForEmployee(options.PageNumber, options.ItemsPerPage, options.ReportStatus);
+                    }
+
+
+                    int totalPages = (int)Math.Ceiling((double)_repository.GetCount() / options.ItemsPerPage);
+                    List<ReportListItemToReturnDto> reportItems = _reportMapper.Map(reports).ToList();
+
+                    ReportListToReturnDto reportList = new ReportListToReturnDto
+                    {
+                        TotalPages = totalPages,
+                        ReportListItems = reportItems
+                    };
+
+                    return new ServiceResult<ReportListToReturnDto>(ResultType.Correct, reportList);
+                }
+
+                return new ServiceResult<ReportListToReturnDto>(ResultType.Unauthorized);
+
+            }
+            catch(Exception e)
+            {
+                return new ServiceResult<ReportListToReturnDto> (ResultType.Error, new List<string> { "Błąd podczas pobierania listy zgłoszeń" });
+            }
         }
     }
 }
