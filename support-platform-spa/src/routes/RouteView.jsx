@@ -14,7 +14,7 @@ import ConfirmationMessage from '../views/register/confirm messages/confirmation
 import Error from '../views/error/Error';
 import LoginForm from '../views/login/login form/LoginForm';
 import RegisterForm from '../views/register/register form/RegisterForm';
-import Reports from '../views/reports/Reports';
+import ReportsList from '../views/reports/report summary/ReportSummary';
 import ReportDetails from '../views/reports/report details/ReportDetails';
 import CreateReport from '../views/reports/create report/CreateReport';
 
@@ -38,8 +38,8 @@ const RouterView = () => {
       <UnauthorizedRoute path="/confirmInProgress" component={ConfirmationInProgress} authCondition={isUserAuthenticated} />
       <UnauthorizedRoute path="/accountCreated" component={AccountCreated} authCondition={isUserAuthenticated} />
 
-      <UserRoute path="/" exact component={Reports} isAuthenticated={isUserAuthenticated} />
-      <UserRoute path="/reports" exact component={Reports} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/" exact component={ReportsList} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/reports" exact component={ReportsList} isAuthenticated={isUserAuthenticated} />
       <UserRoute path="/reports/details/:id" exact component={ReportDetails} isAuthenticated={isUserAuthenticated} />
       <UserRoute path="/error" component={Error} isAuthenticated={isUserAuthenticated} />
 

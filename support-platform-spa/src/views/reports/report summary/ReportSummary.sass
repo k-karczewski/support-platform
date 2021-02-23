@@ -1,0 +1,37 @@
+.report__summary
+  align-items: center
+  min-height: 80vh
+  margin: 0 auto
+  padding-bottom: 50px
+
+  .container
+    width: 50%
+    margin: 0 auto
+
+    .pagination
+      display: flex
+      justify-content: space-around
+      padding: 10px
+      background-color: #fff
+      list-style: none
+      width: 70%
+      margin: 20px auto 0 auto
+
+      li
+        width: 35px
+        height: 35px
+        line-height: 32px
+        border: 2px solid #ddd
+        cursor: pointer
+        // border-radius: 50%
+
+        &.active
+          border-color: royalblue
+          background-color: royalblue
+          color: #fff
+
+        a
+          display: block
+          text-align: center
+          width: 31px
+          height: 31px

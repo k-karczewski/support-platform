@@ -1,0 +1,28 @@
+.report__item
+  &:nth-child(even)
+    background-color: #eee
+
+  .report__link
+    display: flex
+    align-items: center
+    text-decoration: none
+    padding: 15px 0
+    color: #000
+    border-bottom: 1px solid #ccc
+
+    &:hover
+      background-color: #aaa
+
+    .item__element
+      font-size: .95em
+
+      &:nth-child(1)
+        flex-basis: 10%
+      &:nth-child(2)
+        flex-basis: 55%
+      &:nth-child(3)
+        flex-basis: 10%
+      &:nth-child(4)
+        flex-basis: 10%
+      &:nth-child(5)
+        flex-basis: 15%
