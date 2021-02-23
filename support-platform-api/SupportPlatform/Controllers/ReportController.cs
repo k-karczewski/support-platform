@@ -22,15 +22,14 @@ namespace SupportPlatform.Controllers
             _reportService = reportService;
         }
 
-
-        [Authorize(Policy = "RequireClientRole")]
-        [HttpGet("{id}", Name = "GetReportForClient")]
+        [HttpGet("{id}", Name = "GetReportDetails")]
         public async Task<IActionResult> GetReportForClientAsync(int id)
         {
             if(ModelState.IsValid)
             {
                 int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                IServiceResult<ReportDetailsToReturnDto> result = await _reportService.GetReportDetailsForClientAsync(id, userId);
+
+                IServiceResult<ReportDetailsToReturnDto> result = await _reportService.GetReportDetailsAsync(id, userId);
 
                 if(result.Result == ResultType.Correct)
                 {
@@ -44,8 +43,27 @@ namespace SupportPlatform.Controllers
                 return BadRequest(ModelState.Values);
             }
         }
-        
 
+        [HttpPost("list")]
+        public async Task<IActionResult> GetReportList(ReportListOptionsDto options)
+        {
+            IServiceResult<ReportListToReturnDto> result = await  _reportService.GetReportList(options, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            if(result.Result == ResultType.Correct)
+            {
+                return Ok(result.ReturnedObject);
+            }
+            else if (result.Result == ResultType.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest(result.Errors);
+            }
+        }
+
+        
         [HttpPost("create")]
         [Authorize(Policy = "RequireClientRole")]
         public async Task<IActionResult> CreateAsync(ReportToCreateDto reportToCreate)
@@ -56,7 +74,7 @@ namespace SupportPlatform.Controllers
 
                 if(result.Result == ResultType.Correct)
                 {
-                    return CreatedAtRoute("GetReportForClient", new { id = result.ReturnedObject.Id}, result.ReturnedObject);
+                    return CreatedAtRoute("GetReportDetails", new { id = result.ReturnedObject.Id}, result.ReturnedObject);
                 }
                 else if(result.Result == ResultType.Unauthorized)
                 {
