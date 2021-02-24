@@ -44,10 +44,12 @@ namespace SupportPlatform.Controllers
             }
         }
 
-        [HttpPost("list")]
-        public async Task<IActionResult> GetReportList(ReportListOptionsDto options)
+        [HttpGet("list")]
+        public async Task<IActionResult> GetReportList([FromQuery] ReportListParams reportListParams)
         {
-            IServiceResult<ReportListToReturnDto> result = await  _reportService.GetReportList(options, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+            int currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            IServiceResult<ReportListToReturnDto> result = await  _reportService.GetReportList(reportListParams, currentUserId);
 
             if(result.Result == ResultType.Correct)
             {
@@ -90,5 +92,40 @@ namespace SupportPlatform.Controllers
                 return BadRequest(ModelState.Values);
             }
         }
+
+        [HttpPost("change-status")]
+        [Authorize(Policy = "RequireEmployeeRole")]
+        public async Task<IActionResult> ChangeStatus(ReportStatusToUpdateDto statusToUpdate)
+        {
+            if(ModelState.IsValid)
+            {
+                IServiceResult<ReportStatusUpdateToReturnDto> result = await _reportService.UpdateStatus(statusToUpdate, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+                if(result.Result == ResultType.Correct)
+                {
+                    return Ok(result.ReturnedObject);
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("send-response")]
+        [Authorize(Policy = "RequireEmployeeRole")]
+        public async Task<IActionResult> SendResponse(ReportResponseToCreateDto reportResponse)
+        {
+            if (ModelState.IsValid)
+            {
+                IServiceResult<ResponseToReturnDto> result = await _reportService.SendResponse(reportResponse, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+                if (result.Result == ResultType.Correct)
+                {
+                    return Ok(result.ReturnedObject);
+                }
+            }
+
+            return BadRequest();
+        }
+
     }
 }
