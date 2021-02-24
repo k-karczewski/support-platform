@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 import { apiUrl } from '../../../_environments/environment';
-import HttpService from '../../../_services/HttpService';
 import ReportList from '../../../components/reports/overview/report list/ReportList';
 import StatusFilters from '../../../components/reports/overview/status filters/StatusFilters';
 
 import './ReportsOverview.sass';
+import ReportService from '../../../_services/ReportService';
 
 const ReportsOverview = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,15 +23,8 @@ const ReportsOverview = () => {
         resourceUrl += `&statusFilter=${statusFilter}`;
       }
 
-      const http = new HttpService();
-      await http.sendRequest(resourceUrl, 'get')
-        .then(async response => {
-          const json = await response.json()
-          if (response.ok) {
-            return json;
-          }
-          return new Error(json)
-        })
+      const reportService = new ReportService();
+      await reportService.getReportList(resourceUrl)
         .then(data => {
           setTotalPages(data.totalPages);
           setReports(data.reportListItems);

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory, Prompt } from 'react-router-dom';
 
-import HttpService from '../../../_services/HttpService';
-import { apiUrl } from '../../../_environments/environment';
+import ReportService from '../../../_services/ReportService';
 
 import FormHeader from '../../shared/forms/header/FormHeader';
 import FormTextInput from '../../shared/forms/text input/FormTextInput'
@@ -42,22 +41,10 @@ const CreateReportForm = () => {
   const handleFormSubmit = event => {
     event.preventDefault();
     if (formIsValid()) {
-      const reportToCreate = {
-        heading,
-        message,
-        file
-      }
 
-      const http = new HttpService();
-
-      http.sendRequest(`${apiUrl}/report/create`, 'POST', reportToCreate)
-        .then(async response => {
-          const json = await response.json();
-          if (response.ok) {
-            return json;
-          }
-          return Promise.reject(json);
-        }).then(data => {
+      const reportService = new ReportService();
+      reportService.createReport(heading, message, file)
+        .then(data => {
           history.push({
             pathname: `/reports/details/${data.id}`,
             state: {

@@ -7,8 +7,8 @@ import ResponseList from '../../../components/reports/details/response list/Resp
 import ResponseForm from '../../../components/reports/details/response form/ResponseForm';
 
 import AuthService from '../../../_services/AuthService';
-import HttpService from '../../../_services/HttpService';
-import { apiUrl } from '../../../_environments/environment';
+import ReportService from '../../../_services/ReportService';
+import { EmployeeRoleName } from '../../../_environments/environment';
 
 import './ReportDetails.sass';
 
@@ -26,15 +26,9 @@ const ReportDetails = ({ location, match }) => {
 
   useEffect(() => {
     if (!reportDetails) {
-      const http = new HttpService();
-      http.sendRequest(`${apiUrl}/report/${reportId}`, 'get')
-        .then(async response => {
-          const json = await response.json();
-          if (response.ok) {
-            return json;
-          }
-          return Promise.reject(json);
-        })
+      const reportService = new ReportService();
+
+      reportService.getReportDetailsById(reportId)
         .then(data => {
           setReportDetails(data)
         })
@@ -45,20 +39,9 @@ const ReportDetails = ({ location, match }) => {
   }, [reportDetails, reportId, history])
 
   const handleStatusUpdate = newStatus => {
-    const statusToUpdate = {
-      reportId,
-      newStatus: newStatus
-    }
-    const http = new HttpService();
+    const reportService = new ReportService();
 
-    http.sendRequest(`${apiUrl}/report/change-status`, 'post', statusToUpdate)
-      .then(async response => {
-        const json = await response.json();
-        if (response.ok) {
-          return json;
-        }
-        return new Error(json)
-      })
+    reportService.updateStatus(reportId, newStatus)
       .then(data => {
         setReportDetails({ ...reportDetails, status: data.status, modificationEntries: data.modificationEntries })
       })
@@ -68,23 +51,9 @@ const ReportDetails = ({ location, match }) => {
   }
 
   const handleSendResponse = message => {
-    const reportResponse = {
-      reportId,
-      message: message
-    }
-    const http = new HttpService();
-
-    http.sendRequest(`${apiUrl}/report/send-response`, 'post', reportResponse)
-      .then(async response => {
-        const json = await response.json();
-        if (response.ok) {
-          return json;
-        }
-        return new Error(json)
-      })
+    const reportService = new ReportService();
+    reportService.postResponse(reportId, message)
       .then(data => {
-        console.log(data)
-
         const newResponse = {
           id: data.id,
           message: data.message,
@@ -103,7 +72,6 @@ const ReportDetails = ({ location, match }) => {
       .catch(() => {
         history.push('/error');
       });
-
   }
 
   const renderComponent = () => {
@@ -120,7 +88,7 @@ const ReportDetails = ({ location, match }) => {
             userRole={userRole}
             statusUpdateHandler={handleStatusUpdate} />
           { reportDetails.responses.length > 0 ? <ResponseList responses={reportDetails.responses} /> : null}
-          { userRole === "Employee" && reportDetails.status === 1 ? <ResponseForm sendResponseHandler={handleSendResponse} /> : null}
+          { userRole === EmployeeRoleName && reportDetails.status === 1 ? <ResponseForm sendResponseHandler={handleSendResponse} /> : null}
           <ChangeHistory history={reportDetails.modificationEntries} />
         </div>
       )
@@ -134,6 +102,5 @@ const ReportDetails = ({ location, match }) => {
     renderComponent()
   );
 }
-
 
 export default ReportDetails;
