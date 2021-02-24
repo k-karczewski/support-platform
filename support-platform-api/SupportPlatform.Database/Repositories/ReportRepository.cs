@@ -13,38 +13,26 @@ namespace SupportPlatform.Database.Repositories
 
         public ReportRepository(SupportPlatformDbContext dbContext) : base(dbContext) { }
 
-
-        public int GetCount()
+        public IQueryable<ReportEntity> GetReports(string role, int userId = 0)
         {
-            return _dbSet.Count();
+            switch(role)
+            {
+                case RoleNames.Client:
+                    return _dbSet.Where(u => u.UserId == userId).Include(u => u.User);
+                default:
+                    return _dbSet.Include(u => u.User);
+            }
         }
 
-        public async Task<ICollection<ReportEntity>> GetReportsForClient(int numberOfPage, int itemsPerPage, int status, int userId)
-        {
-            return await _dbSet
-                            .Where(u => u.UserId == userId)
-                            .Where(s => (int)s.Status == status)
-                            .OrderByDescending(d => d.Date.Date)
-                            .Skip(numberOfPage * itemsPerPage)
-                            .Take(itemsPerPage)
-                            .ToListAsync();
-        }
-
-        public async Task<ICollection<ReportEntity>> GetReportsForEmployee(int numberOfPage, int itemsPerPage, int status)
-        {
-            return await _dbSet
-                            .Where(s => (int)s.Status == status)
-                            .OrderByDescending(d => d.Date.Date)
-                            .ThenByDescending(d => d.Date.TimeOfDay)
-                            .Skip(numberOfPage * itemsPerPage)
-                            .Take(itemsPerPage)
-                            .Include(u => u.User)
-                            .ToListAsync();
-        }
 
         public async Task<ReportEntity> GetReportById(int id)
         {
-            return await _dbSet.Include(r => r.Responses).Include(m => m.ModificationEntries).Include(a => a.Attachment).Include(u => u.User).FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbSet
+                            .Include(r => r.Responses)
+                            .Include(m => m.ModificationEntries)
+                            .Include(a => a.Attachment)
+                            .Include(u => u.User)
+                            .FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
