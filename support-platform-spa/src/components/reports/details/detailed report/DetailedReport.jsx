@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import MessageElement from '../../../shared/message element/MessageElement';
+import { EmployeeRoleName } from '../../../../_environments/environment';
+import { ReportStatusConverter } from '../../../../_helpers/ReportStatusConverter';
+
+import MessageElement from '../message element/MessageElement';
+import StatusEditor from '../status editor/StatusEditor';
 
 import './DetailedReport.sass';
 
-const DetailedReport = ({ id, heading, message, date, status, createdBy, attachment }) => {
+const DetailedReport = ({ id, heading, message, date, status, createdBy, attachment, userRole, statusUpdateHandler }) => {
   return (
     <section className="detailed__report">
       <section className="report__header">
@@ -14,7 +18,7 @@ const DetailedReport = ({ id, heading, message, date, status, createdBy, attachm
       <section className="report__content">
         <h4 className="content__item report__heading">Tytuł: <span>{heading}</span></h4>
         <MessageElement date={date} createdBy={createdBy} message={message} />
-        <p className="content__item report__status">Status: <span>{status}</span></p>
+        {userRole === EmployeeRoleName ? <StatusEditor currentStatus={status} statusUpdateHandler={statusUpdateHandler} /> : <p className="content__item report__status">Status: <span>{ReportStatusConverter(status)}</span></p>}
         {attachment ? <p className="content__item report__status">Załącznik: <Link to={attachment.url}>{attachment.name}</Link></p> : null}
       </section>
     </section>

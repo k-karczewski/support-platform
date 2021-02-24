@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
-import ReportList from '../../../components/reports/summary/report list/ReportList';
-import StatusFilters from '../../../components/reports/summary/status filters/StatusFilters';
-import HttpService from '../../../_services/HttpService';
 import { apiUrl } from '../../../_environments/environment';
+import HttpService from '../../../_services/HttpService';
+import ReportList from '../../../components/reports/overview/report list/ReportList';
+import StatusFilters from '../../../components/reports/overview/status filters/StatusFilters';
 
-import './ReportSummary.sass';
+import './ReportsOverview.sass';
 
-const Reports = () => {
-  const [currentPage, setCurrentPage] = useState(0);
+const ReportsOverview = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState(0);
   const [reports, setReports] = useState([]);
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    const paginationOptions = {
-      pageNumber: currentPage,
-      itemsPerPage: itemsPerPage,
-      reportStatus: statusFilter
-    }
     const fetchData = async () => {
+      let resourceUrl = `${apiUrl}/report/list?pageNumber=${currentPage}`;
+
+      if (statusFilter !== null) {
+        resourceUrl += `&statusFilter=${statusFilter}`;
+      }
+
       const http = new HttpService();
-      await http.sendRequest(`${apiUrl}/report/list`, 'post', paginationOptions)
+      await http.sendRequest(resourceUrl, 'get')
         .then(async response => {
           const json = await response.json()
           if (response.ok) {
@@ -40,9 +41,9 @@ const Reports = () => {
     fetchData()
   }, [currentPage, itemsPerPage, statusFilter])
 
-  const handlePageChange = (data) => {
-
-    setCurrentPage(data.selected);
+  const handlePageChange = ({ selected }) => {
+    // selected stores page number counted from 0
+    setCurrentPage(selected + 1);
   }
 
   const filterChangeHandler = status => {
@@ -50,17 +51,21 @@ const Reports = () => {
   }
 
   const renderList = () => {
-    let heading = "Nowe zgłoszenia";
-    if (statusFilter === 1) {
+    let heading = "";
+    if (statusFilter === 0) {
+      heading = "Nowe zgłoszenia";
+    } else if (statusFilter === 1) {
       heading = "Zgłoszenia rozpatrywane";
     } else if (statusFilter === 2) {
       heading = "Zamkniete zgłoszenia";
+    } else {
+      heading = "Wszystkie zgłoszenia"
     }
     return <ReportList heading={heading} reports={reports} />
   }
 
   return (
-    <main className="report__summary">
+    <main className="reports__overview">
       <div className="container">
         <StatusFilters currentFilter={statusFilter} onClickHandler={filterChangeHandler} />
         {renderList()}
@@ -68,7 +73,6 @@ const Reports = () => {
           previousLabel={'<'}
           nextLabel={'>'}
           breakLabel={'...'}
-          breakClassName={'break-me'}
           pageCount={totalPages}
           marginPagesDisplayed={2}
           pageRangeDisplayed={1}
@@ -77,9 +81,8 @@ const Reports = () => {
           subContainerClassName={'pages pagination'}
           activeClassName={'active'} />
       </div>
-
     </main>
   );
 }
 
-export default Reports;
+export default ReportsOverview;

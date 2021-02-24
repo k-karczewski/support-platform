@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Prompt } from 'react-router-dom';
+
 import AuthService from '../../../_services/AuthService';
 
-import FormHeader from '../../../components/forms/form header/FormHeader';
-import FormTextInput from '../../../components/forms/form text input/FormTextInput';
-import FormSubmitButton from '../../../components/forms/form submit button/FormSubmitButton';
+import FormErrorsPanel from '../../../components/shared/forms/errors panel/FormErrorsPanel';
+import FormHeader from '../../../components/shared/forms/header/FormHeader';
+import FormTextInput from '../../../components/shared/forms/text input/FormTextInput';
+import FormSubmitButton from '../../../components/shared/forms/submit button/FormSubmitButton';
 
 import './RegisterForm.sass';
-import FormErrorsPanel from '../../../components/forms/form errors panel/FormErrorsPanel';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -52,6 +53,11 @@ const Register = () => {
       } else {
         setFormErrors(result.errors);
       }
+
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
     }
   }
 
@@ -66,6 +72,11 @@ const Register = () => {
           <FormTextInput labelText="Potwierdź hasło" htmlFor="confirmPassword" type="password" onChangeHandler={handleInputsValueChange} />
           <FormSubmitButton text="Zarejestruj się" />
         </form>
+        <Prompt
+          when={username || password || email || confirmPassword}
+          message="Masz niezapisane zmiany. 
+                Czy na pewno chcesz opuścić tę stronę?"
+        />
       </div>
 
       {formErrors.length > 0 && <FormErrorsPanel errors={formErrors} />}

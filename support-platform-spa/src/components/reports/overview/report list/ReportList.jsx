@@ -7,13 +7,22 @@ import './ReportList.sass';
 
 const ReportList = ({ heading, reports }) => {
 
-
   const getReportItems = () => {
     if (reports && reports.length > 0) {
-      const reportItems = reports.map(report => <ReportListItem id={report.id} heading={report.heading} date={report.date} status={report.status} createdBy={report.createdBy} />);
+      const reportItems = reports.map(report =>
+        <ReportListItem
+          key={report.id}
+          id={report.id}
+          heading={report.heading}
+          date={report.date}
+          status={report.status}
+          createdBy={report.createdBy} />);
+
       return reportItems;
     } else {
-      return <p>Nie ma nic do wyświetlenia :(</p>
+      return (
+        <p>Nie ma nic do wyświetlenia :(</p>
+      );
     }
   }
 

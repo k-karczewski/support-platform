@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import AuthService from '../../../_services/AuthService';
 
-import FormHeader from '../../../components/forms/form header/FormHeader';
-import FormTextInput from '../../../components/forms/form text input/FormTextInput';
-import FormSubmitButton from '../../../components/forms/form submit button/FormSubmitButton';
+import FormHeader from '../../../components/shared/forms/header/FormHeader';
+import FormTextInput from '../../../components/shared/forms/text input/FormTextInput';
+import FormSubmitButton from '../../../components/shared/forms/submit button/FormSubmitButton';
 
 import './LoginForm.sass';
-import FormErrorsPanel from '../../../components/forms/form errors panel/FormErrorsPanel';
+import FormErrorsPanel from '../../../components/shared/forms/errors panel/FormErrorsPanel';
 
 const LoginForm = () => {
   const history = useHistory();

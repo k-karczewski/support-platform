@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Prompt } from 'react-router-dom';
 
 import HttpService from '../../../_services/HttpService';
 import { apiUrl } from '../../../_environments/environment';
 
-import FormHeader from '../../forms/form header/FormHeader';
-import FormTextInput from '../../forms/form text input/FormTextInput'
-import FormTextAreaInput from '../../forms/form textarea input/FormTextAreaInput';
-import FormSubmitButton from '../../forms/form submit button/FormSubmitButton';
+import FormHeader from '../../shared/forms/header/FormHeader';
+import FormTextInput from '../../shared/forms/text input/FormTextInput'
+import FormTextAreaInput from '../../shared/forms/textarea input/FormTextAreaInput';
+import FormSubmitButton from '../../shared/forms/submit button/FormSubmitButton';
 
+import FormErrorsPanel from '../../shared/forms/errors panel/FormErrorsPanel';
 import './CreateReportForm.sass';
-import FormErrorsPanel from '../../forms/form errors panel/FormErrorsPanel';
 
 const CreateReportForm = () => {
   const [heading, setHeading] = useState('');
@@ -41,8 +41,6 @@ const CreateReportForm = () => {
 
   const handleFormSubmit = event => {
     event.preventDefault();
-
-
     if (formIsValid()) {
       const reportToCreate = {
         heading,
@@ -55,7 +53,6 @@ const CreateReportForm = () => {
       http.sendRequest(`${apiUrl}/report/create`, 'POST', reportToCreate)
         .then(async response => {
           const json = await response.json();
-
           if (response.ok) {
             return json;
           }
@@ -71,6 +68,10 @@ const CreateReportForm = () => {
         .catch(errors => {
           setFormErrors(errors)
         });
+
+      setHeading('');
+      setMessage('');
+      setFile(null);
     }
   }
 
@@ -123,7 +124,13 @@ const CreateReportForm = () => {
         </form>
       </div>
       {formErrors.length > 0 ? <FormErrorsPanel errors={formErrors} /> : null}
+      <Prompt
+        when={heading || message || file}
+        message="Masz niezapisane zmiany. 
+                Czy na pewno chcesz opuścić tę stronę?"
+      />
     </main>
+
   );
 }
 

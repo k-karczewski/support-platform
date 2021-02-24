@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import ChangeHistory from '../../../components/reports/details/change history/ChangeHistory';
 import DetailedReport from '../../../components/reports/details/detailed report/DetailedReport';
@@ -12,44 +12,11 @@ import { apiUrl } from '../../../_environments/environment';
 
 import './ReportDetails.sass';
 
-const ReportDetails = ({ location, match, details }) => {
+const ReportDetails = ({ location, match }) => {
   const [userRole, setUserRole] = useState('');
   const [reportDetails, setReportDetails] = useState(location.state ? location.state.data : null);
   const [reportId] = useState(match.params.id);
   const history = useHistory();
-
-  const tmp = {
-    id: 12,
-    heading: "Zgłoszenie 1",
-    message: "POMOCY!!!!! Nie działa mi",
-    responses: [
-      {
-        id: 23,
-        message: "Spróbuj zrestartować",
-        date: "12.01.2021",
-        createdBy: "Admin"
-      },
-      {
-        id: 28,
-        message: "U mnie działa",
-        date: "13.01.2021",
-        createdBy: "Najlepszy pracownik"
-      }
-    ],
-    date: "11.01.2021",
-    modificationEntries: [
-      {
-        id: 2,
-        message: "stworzono raport",
-        date: "11.01.2021"
-      }
-    ],
-    attachment: {
-      name: "document 1.pdf",
-      url: "url2222"
-    },
-    status: 1
-  }
 
   useEffect(() => {
     const authService = new AuthService();
@@ -69,7 +36,6 @@ const ReportDetails = ({ location, match, details }) => {
           return Promise.reject(json);
         })
         .then(data => {
-          console.log(data);
           setReportDetails(data)
         })
         .catch(() => {
@@ -78,14 +44,83 @@ const ReportDetails = ({ location, match, details }) => {
     }
   }, [reportDetails, reportId, history])
 
+  const handleStatusUpdate = newStatus => {
+    const statusToUpdate = {
+      reportId,
+      newStatus: newStatus
+    }
+    const http = new HttpService();
+
+    http.sendRequest(`${apiUrl}/report/change-status`, 'post', statusToUpdate)
+      .then(async response => {
+        const json = await response.json();
+        if (response.ok) {
+          return json;
+        }
+        return new Error(json)
+      })
+      .then(data => {
+        setReportDetails({ ...reportDetails, status: data.status, modificationEntries: data.modificationEntries })
+      })
+      .catch(() => {
+        history.push('/error');
+      });
+  }
+
+  const handleSendResponse = message => {
+    const reportResponse = {
+      reportId,
+      message: message
+    }
+    const http = new HttpService();
+
+    http.sendRequest(`${apiUrl}/report/send-response`, 'post', reportResponse)
+      .then(async response => {
+        const json = await response.json();
+        if (response.ok) {
+          return json;
+        }
+        return new Error(json)
+      })
+      .then(data => {
+        console.log(data)
+
+        const newResponse = {
+          id: data.id,
+          message: data.message,
+          date: data.date,
+          createdBy: data.createdBy
+        }
+
+        const newModification = {
+          id: data.modificationEntry.id,
+          message: data.modificationEntry.message,
+          date: data.modificationEntry.date,
+        }
+
+        setReportDetails({ ...reportDetails, responses: [...reportDetails.responses, newResponse], modificationEntries: [...reportDetails.modificationEntries, newModification] })
+      })
+      .catch(() => {
+        history.push('/error');
+      });
+
+  }
 
   const renderComponent = () => {
     if (reportDetails) {
       return (
         <div className="report__details">
-          <DetailedReport id={reportDetails.id} heading={reportDetails.heading} message={reportDetails.message} date={reportDetails.date} status="Nowe" createdBy={reportDetails.createdBy} attachment={reportDetails.attachment} />
+          <DetailedReport id={reportDetails.id}
+            heading={reportDetails.heading}
+            message={reportDetails.message}
+            date={reportDetails.date}
+            status={reportDetails.status}
+            createdBy={reportDetails.createdBy}
+            attachment={reportDetails.attachment}
+            userRole={userRole}
+            statusUpdateHandler={handleStatusUpdate} />
           { reportDetails.responses.length > 0 ? <ResponseList responses={reportDetails.responses} /> : null}
-          { userRole === "Employee" && reportDetails.status === 1 ? <ResponseForm /> : null}
+          { userRole === "Employee" && reportDetails.status === 1 ? <ResponseForm sendResponseHandler={handleSendResponse} /> : null}
           <ChangeHistory history={reportDetails.modificationEntries} />
         </div>
       )
@@ -94,7 +129,7 @@ const ReportDetails = ({ location, match, details }) => {
       return null;
     }
   }
-  
+
   return (
     renderComponent()
   );

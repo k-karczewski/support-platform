@@ -1,12 +1,14 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
+
+import AuthService from './_services/AuthService';
 
 import Navigation from './layout/navigation/Navigation';
-import RouteView from './routes/RouteView';
+import RouteView from './layout/route view/RouteView';
+import Footer from './layout/footer/Footer';
 
 import './App.css';
-import { useEffect } from 'react';
-import AuthService from './_services/AuthService';
 
 function App() {
   const decodedToken = useSelector(store => store.authStates.decodedToken);
@@ -21,6 +23,7 @@ function App() {
         <Router>
           <Navigation decodedToken={decodedToken} />
           <RouteView />
+          <Footer />
         </Router>
     </div>
   );

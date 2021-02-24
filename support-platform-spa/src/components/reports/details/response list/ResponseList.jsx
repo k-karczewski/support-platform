@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ResponseItem from './response item/ResponseItem';
 
 import './ResponseList.sass';
@@ -13,9 +14,7 @@ const ResponseList = ({ responses }) => {
       <ul>
         {responseItems}
       </ul>
-
     </section>
-
   );
 }
 

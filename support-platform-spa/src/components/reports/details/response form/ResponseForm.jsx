@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Prompt } from 'react-router-dom';
 
-import FormTextAreaInput from '../../../forms/form textarea input/FormTextAreaInput';
-import FormSubmitButton from '../../../forms/form submit button/FormSubmitButton';
+import FormSubmitButton from '../../../shared/forms/submit button/FormSubmitButton';
+import FormTextAreaInput from '../../../shared/forms/textarea input/FormTextAreaInput';
 
 import './ResponseForm.sass';
 
-const ResponseForm = () => {
+const ResponseForm = ({ sendResponseHandler }) => {
   const [response, setResponse] = useState('');
 
   const handleResponse = event => {
@@ -14,19 +15,22 @@ const ResponseForm = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
-
-    if (response.length > 0) {
-      console.log(response);
-    }
+    sendResponseHandler(response);
+    setResponse('');
   }
 
   return (
     <section className="report__response">
       <h3 className="form__heading">Odpowiedz na zgłoszenie</h3>
       <form method="post" onSubmit={handleSubmit}>
-        <FormTextAreaInput htmlFor="response" onChangeHandler={handleResponse} />
+        <FormTextAreaInput htmlFor="response" onChangeHandler={handleResponse} placeholder="Wpisz wiadomość tutaj..." value={response} />
         <FormSubmitButton text="Wyślij wiadomość" />
       </form>
+      <Prompt
+        when={response}
+        message="Masz niezapisane zmiany. 
+                Czy na pewno chcesz opuścić tę stronę?"
+      />
     </section>
   );
 }

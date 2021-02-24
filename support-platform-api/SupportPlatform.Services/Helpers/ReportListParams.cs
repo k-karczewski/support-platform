@@ -7,7 +7,7 @@ namespace SupportPlatform.Services
     public class ReportListParams
     {
         public int PageNumber { get; set; } = 1;
-        public int PageSize = 10;
-        public int? StatusFilter = null;
+        public int PageSize { get; set; }  = 10;
+        public int? StatusFilter { get; set; }  = null;
     }
 }

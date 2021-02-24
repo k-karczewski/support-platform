@@ -121,7 +121,7 @@ namespace SupportPlatform.Services
                     {
                         new ModificationEntryEntity
                         {
-                            Message = $"Klient {username} stworzył/a nowe zgłoszenie tytule: '{reportData.Heading}'",
+                            Message = $"Klient {username} stworzył/a nowe zgłoszenie o tytule: '{reportData.Heading}'",
                             Date = DateTime.Now
                         }
                     },
