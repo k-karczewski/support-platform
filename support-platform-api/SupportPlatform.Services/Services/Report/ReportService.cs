@@ -132,7 +132,13 @@ namespace SupportPlatform.Services
             return report;
         }
 
-        public async Task<IServiceResult<ReportListToReturnDto>> GetReportList(ReportListOptionsDto options, int userId)
+        /// <summary>
+        /// Gets list of paginated reports. Optionally the list can be filtered by report status
+        /// </summary>
+        /// <param name="reportListParams">Pagination parameters of report list that will be returned (page number, page size, status filter).</param>
+        /// <param name="userId">Id of user which made request</param>
+        /// <returns>List of reports generated using parameters</returns>
+        public async Task<IServiceResult<ReportListToReturnDto>> GetReportList(ReportListParams reportListParams, int userId)
         {
             try
             {
@@ -142,20 +148,13 @@ namespace SupportPlatform.Services
                 {
                     string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
 
-                    ICollection<ReportEntity> reports;
+                    IQueryable<ReportEntity> reports = _repository.GetReports(userRole, userId);
 
-                    if (userRole == "Client")
-                    {
-                        reports = await _repository.GetReportsForClient(options.PageNumber, options.ItemsPerPage, options.ReportStatus, userId);
-                    }
-                    else
-                    {
-                        reports = await _repository.GetReportsForEmployee(options.PageNumber, options.ItemsPerPage, options.ReportStatus);
-                    }
+                    reports = PaginateCollection(reports, reportListParams);
 
+                    int totalPages = (int)Math.Ceiling(reports.Count() / (double)reportListParams.PageSize);
 
-                    int totalPages = (int)Math.Ceiling((double)_repository.GetCount() / options.ItemsPerPage);
-                    List<ReportListItemToReturnDto> reportItems = _reportMapper.Map(reports).ToList();
+                    List<ReportListItemToReturnDto> reportItems = _reportMapper.Map(await reports.ToListAsync()).ToList();
 
                     ReportListToReturnDto reportList = new ReportListToReturnDto
                     {
@@ -169,10 +168,127 @@ namespace SupportPlatform.Services
                 return new ServiceResult<ReportListToReturnDto>(ResultType.Unauthorized);
 
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return new ServiceResult<ReportListToReturnDto> (ResultType.Error, new List<string> { "Błąd podczas pobierania listy zgłoszeń" });
             }
+        }
+
+
+        public async Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusToUpdateDto statusToUpdate, int userId)
+        {
+            UserEntity user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if(user != null)
+            {
+                ReportEntity reportToUpdate = await _repository.GetReportById(statusToUpdate.ReportId);
+
+                if(reportToUpdate != null)
+                {
+                    reportToUpdate.Status = (StatusEnum)Enum.Parse(typeof(StatusEnum), statusToUpdate.NewStatus.ToString());
+                    string statusName = ConvertToStatusName(reportToUpdate.Status);
+
+                    reportToUpdate.ModificationEntries.Add(new ModificationEntryEntity
+                    {
+                        Date = DateTime.Now,
+                        Message = $"Pracownik {user.UserName} zmienił status zgłoszenia na '{statusName}'"
+                    });
+
+                    _repository.SaveChanges();
+
+
+                    ReportStatusUpdateToReturnDto statusUpdated = new ReportStatusUpdateToReturnDto
+                    {
+                        ModificationEntries = _reportMapper.Map(reportToUpdate.ModificationEntries).ToList(),
+                        Status = (int)reportToUpdate.Status
+                    };
+
+                    return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Correct, statusUpdated);
+                }
+            }
+            return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+        }
+
+        private string ConvertToStatusName(StatusEnum status)
+        {
+            switch(status)
+            {
+                case StatusEnum.New: return "Nowe";
+                case StatusEnum.Pending: return "W trakcie rozpatrywania";
+                default: return "Zakończone";
+            }
+        }
+
+        public async Task<IServiceResult<ResponseToReturnDto>> SendResponse(ReportResponseToCreateDto responseToCreate, int userId)
+        {
+            try
+            {
+                UserEntity user = await _userManager.FindByIdAsync(userId.ToString());
+
+                if (user != null)
+                {
+                    ReportEntity reportToUpdate = await _repository.GetReportById(responseToCreate.ReportId);
+
+                    if (reportToUpdate != null)
+                    {
+                        ResponseEntity response = new ResponseEntity
+                        {
+                            Date = DateTime.Now,
+                            Message = responseToCreate.Message,
+                            UserId = userId
+                        };
+
+                        reportToUpdate.Responses.Add(response);
+
+                        reportToUpdate.ModificationEntries.Add(new ModificationEntryEntity
+                        {
+                            Date = DateTime.Now,
+                            Message = $"Pracownik {user.UserName} odpowiedział na zgłoszenie ${reportToUpdate.Heading}"
+                        });
+
+                        _repository.SaveChanges();
+
+
+                        ResponseToReturnDto responseToReturn = _reportMapper.Map(response);
+                        responseToReturn.ModificationEntry = new ModificationEntryToReturnDto
+                        {
+                            Date = DateTime.Now.ToString(),
+                            Message = $"Pracownik {user.UserName} odpowiedział na zgłoszenie ${reportToUpdate.Heading}"
+                        };
+
+                        return new ServiceResult<ResponseToReturnDto>(ResultType.Correct, responseToReturn);
+                    }
+                }
+
+                return new ServiceResult<ResponseToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            }
+            catch(Exception e)
+            {
+                return new ServiceResult<ResponseToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            }
+
+        }
+
+        /// <summary>
+        /// Creates paginated (filtered out) collection based on pagination parameters
+        /// </summary>
+        /// <param name="source">Source data collection</param>
+        /// <param name="paginationParameters">Parameters based on which the collection will be generated</param>
+        /// <returns>Paginated source collection by parameters</returns>
+        private IQueryable<ReportEntity> PaginateCollection(IQueryable<ReportEntity> source, ReportListParams paginationParameters)
+        {
+            
+            if(paginationParameters.StatusFilter != null)
+            {
+                source = source.Where(s => (int)s.Status == paginationParameters.StatusFilter);
+            }
+
+            return source
+                        .OrderByDescending(d => d.Date.Date)
+                        .ThenByDescending(d => d.Date.TimeOfDay)
+                        .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
+                        .Take(paginationParameters.PageSize);
+
         }
     }
 }
