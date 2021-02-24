@@ -9,6 +9,14 @@
     <Compile Remove="Migrations\20210220143154_migr.Designer.cs" />
     <Compile Remove="Migrations\20210220185918_AddedAttachmentEntity.cs" />
     <Compile Remove="Migrations\20210220185918_AddedAttachmentEntity.Designer.cs" />
+    <Compile Remove="Migrations\20210224121903_ChangedOnDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20210224121903_ChangedOnDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20210224122435_ChangedOnDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20210224122435_ChangedOnDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20210224125128_ChangedOnDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20210224125128_ChangedOnDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20210224130146_ChangedOnDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20210224130146_ChangedOnDeleteBehavior.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
