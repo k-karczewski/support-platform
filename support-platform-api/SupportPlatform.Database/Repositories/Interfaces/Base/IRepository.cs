@@ -8,5 +8,6 @@ namespace SupportPlatform.Database
     {
         bool AddNew(Entity entity);
         bool Delete(int id);
+        bool SaveChanges();
     }
 }
