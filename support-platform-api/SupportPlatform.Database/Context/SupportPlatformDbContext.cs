@@ -21,13 +21,13 @@ namespace SupportPlatform.Database
             {
                 entity.HasKey(k => k.Id);
                 entity.HasOne(u => u.User).WithMany(r => r.Reports).HasForeignKey(k => k.UserId);
+                entity.HasMany(r => r.Responses).WithOne(r => r.Report).HasForeignKey(k => k.ReportId);
             });
 
             builder.Entity<ResponseEntity>(entity =>
             {
                 entity.HasKey(k => k.Id);
-                entity.HasOne(r => r.Report).WithMany(r => r.Responses).HasForeignKey(k => k.ReportId).OnDelete(DeleteBehavior.Restrict);
-                entity.HasOne(u => u.User).WithMany(r => r.Responses).HasForeignKey(k => k.UserId);
+                entity.HasOne(u => u.User).WithMany(r => r.Responses).HasForeignKey(k => k.UserId).OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<ModificationEntryEntity>(entity =>
