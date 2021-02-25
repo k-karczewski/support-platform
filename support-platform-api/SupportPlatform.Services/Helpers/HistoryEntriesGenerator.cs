@@ -12,7 +12,7 @@ namespace SupportPlatform.Services
             return new ModificationEntryEntity
             {
                 Date = DateTime.Now,
-                Message = $"Pracownik {username} odpowiedział na zgłoszenie ${reportHeading}"
+                Message = $"Pracownik {username} odpowiedział na zgłoszenie '{reportHeading}'"
             };
         }
 
