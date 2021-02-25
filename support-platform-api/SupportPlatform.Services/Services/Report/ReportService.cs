@@ -256,7 +256,7 @@ namespace SupportPlatform.Services
         /// <returns>Generated attachment entity or null</returns>
         private AttachmentEntity CreateAttachment(FileToUploadDto file, int userId)
         {
-            if (file.Filename != null && file.FileInBytes != null)
+            if (file != null && file.FileInBytes != null)
             {
                 string attachmentUrl = _cloudinaryManager.UploadFile(file, userId);
 
