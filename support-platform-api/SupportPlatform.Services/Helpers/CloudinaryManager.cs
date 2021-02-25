@@ -25,11 +25,21 @@ namespace SupportPlatform.Services
             _cloudinary = new Cloudinary(account);
         }
 
+        /// <summary>
+        /// Deletes file from Cloudinary
+        /// </summary>
+        /// <param name="publicId">Public identifier of resource</param>
         public async Task DeleteFileAsync(string publicId)
         {
             await _cloudinary.DeleteResourcesAsync(publicId);
         }
 
+        /// <summary>
+        /// Uploads file to Cloudinary
+        /// </summary>
+        /// <param name="fileToUpload">File to be uploaded</param>
+        /// <param name="userId">Identifier of sumbitter</param>
+        /// <returns>Absolute uri to uploaded resource</returns>
         public string UploadFile(FileToUploadDto fileToUpload, int userId)
         {
             Stream stream = new MemoryStream(fileToUpload.FileInBytes);

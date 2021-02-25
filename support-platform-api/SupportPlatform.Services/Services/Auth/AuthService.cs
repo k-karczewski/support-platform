@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using SupportPlatform.Database;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
@@ -75,6 +73,11 @@ namespace SupportPlatform.Services
             }
         }
 
+        /// <summary>
+        /// Logins user by password check
+        /// </summary>
+        /// <param name="userToLogin">data of user from login from</param>
+        /// <returns>Service result with status of operation and decoded token if succeeded</returns>
         public async Task<IServiceResult<string>> LoginAsync(UserToLoginDto userToLogin)
         {
             userToLogin.Username = userToLogin.Username.Trim().ToLower();
@@ -103,13 +106,18 @@ namespace SupportPlatform.Services
             }
         }
 
+        /// <summary>
+        /// Verifies user's email address
+        /// </summary>
+        /// <param name="accountToConfirm">Email confirmation data</param>
+        /// <returns>Status of operation</returns>
         public async Task<IServiceResult> ConfirmEmailAsync(AccountToConfirmDto accountToConfirm)
         {
             UserEntity user = await _signInManager.UserManager.FindByIdAsync(accountToConfirm.UserId);
 
             if(user.EmailConfirmed == false)
             {
-                string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(accountToConfirm.Token));
+                string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(accountToConfirm.EmailConfirmationToken));
 
                 IdentityResult confirmationResult = await _signInManager.UserManager.ConfirmEmailAsync(user, decodedToken);
 
@@ -124,16 +132,20 @@ namespace SupportPlatform.Services
             return new ServiceResult(ResultType.Failed, new List<string> { "Ten adres email został już potwierdzony" });
         }
 
+        /// <summary>
+        /// Assigns Client role to user
+        /// </summary>
+        /// <param name="user">User the role will be assigned for</param>
         private async Task AssignClientRole(UserEntity user)
         {
-            string roleName = "Client";
+            string roleName = RoleNames.Client;
 
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
                 await _roleManager.CreateAsync(new RoleEntity
                 {
-                    Name = roleName
-                });
+                    Name = RoleNames.Client
+            });
             }
 
             await _signInManager.UserManager.AddToRoleAsync(user, roleName);
