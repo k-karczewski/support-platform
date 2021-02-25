@@ -12,7 +12,7 @@ namespace SupportPlatform.Database
     {
         public static async Task SeedUsers(UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager)
         {
-            string roleName = "Employee";
+            string roleName = RoleNames.Employee;
             var employees = await userManager.GetUsersInRoleAsync(roleName);
             var roleExist = await roleManager.RoleExistsAsync(roleName);
 
