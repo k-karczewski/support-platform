@@ -54,7 +54,6 @@ const LoginForm = () => {
 
     if (formIsValid()) {
       const result = await authService.login(username, password);
-      console.log(result)
       if (result.succeeded) {
         // push to view for logged in user
         history.push('/');

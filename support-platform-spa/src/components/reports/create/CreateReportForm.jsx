@@ -41,10 +41,10 @@ const CreateReportForm = () => {
   const handleFormSubmit = event => {
     event.preventDefault();
     if (formIsValid()) {
-
       const reportService = new ReportService();
       reportService.createReport(heading, message, file)
         .then(data => {
+          console.log("then")
           history.push({
             pathname: `/reports/details/${data.id}`,
             state: {
