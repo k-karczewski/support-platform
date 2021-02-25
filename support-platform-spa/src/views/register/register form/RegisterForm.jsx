@@ -49,15 +49,14 @@ const Register = () => {
       const result = await authService.register(username, email, password, confirmPassword);
 
       if (result.succeeded) {
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
         history.push('/accountCreated');
       } else {
         setFormErrors(result.errors);
       }
-
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
     }
   }
 
@@ -73,7 +72,7 @@ const Register = () => {
           <FormSubmitButton text="Zarejestruj się" />
         </form>
         <Prompt
-          when={username || password || email || confirmPassword}
+          when={username.length > 0 || password.length > 0 || email.length > 0 || confirmPassword.length > 0}
           message="Masz niezapisane zmiany. 
                 Czy na pewno chcesz opuścić tę stronę?"
         />
