@@ -10,7 +10,7 @@ import FormSubmitButton from '../../../components/shared/forms/submit button/For
 
 import './RegisterForm.sass';
 
-const Register = () => {
+const RegisterForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,9 +42,36 @@ const Register = () => {
     }
   }
 
+  const formIsValid = () => {
+    const errorList = [];
+    if (username.length === 0) {
+      errorList.push("Proszę wpisać nazwę użytkownika");
+    }
+
+    if (email.length === 0) {
+      errorList.push("Proszę wpisać adres email");
+    }
+
+    if (password.length === 0) {
+      errorList.push("Proszę wpisać hasło");
+    }
+
+    if (confirmPassword.length === 0) {
+      errorList.push("Proszę wpisać potwierdzenie hasła");
+    }
+
+    if (confirmPassword !== password) {
+      errorList.push("Hasło i potwierdzenie hasła nie są takie same");
+    }
+
+    setFormErrors(errorList);
+    return errorList.length === 0 ? true : false;
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (username && email && password && confirmPassword && (password === confirmPassword)) {
+
+    if (formIsValid()) {
       const authService = new AuthService();
       const result = await authService.register(username, email, password, confirmPassword);
 
@@ -59,7 +86,6 @@ const Register = () => {
       }
     }
   }
-
   return (
     <main className="register">
       <div className="container">
@@ -83,4 +109,4 @@ const Register = () => {
   );
 }
 
-export default Register;
+export default RegisterForm;

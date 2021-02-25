@@ -33,17 +33,33 @@ const LoginForm = () => {
     }
   }
 
+  const formIsValid = () => {
+    const errorList = [];
+    if (username.length === 0) {
+      errorList.push("Proszę wpisać nazwę użytkownika");
+    }
+
+    if (password.length === 0) {
+      errorList.push("Proszę wpisać hasło");
+    }
+
+    setFormErrors(errorList);
+    return errorList.length === 0 ? true : false;
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const authService = new AuthService();
 
-    if (username && password) {
+    if (formIsValid()) {
       const result = await authService.login(username, password);
+      console.log(result)
       if (result.succeeded) {
         // push to view for logged in user
         history.push('/');
-      } else {
+      }
+      else {
         // show error message
         setFormErrors(result.errors);
       }

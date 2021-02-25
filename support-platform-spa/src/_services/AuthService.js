@@ -34,7 +34,9 @@ export default class AuthService {
           store.dispatch(saveUserDataAction(data.username, decodedToken));
         } else {
           result.errors = data;
-        }
+        }})
+      .catch(() => {
+        result.errors = ["Serwer nie odpowiada. Spróbuj ponownie poźniej."];
       });
       return result;
   }
@@ -60,8 +62,10 @@ export default class AuthService {
         if(data) {
           result.succeeded = false;
           result.errors = data;       
-        }
-      });
+        }})
+      .catch(() => {
+        result.errors = ["Serwer nie odpowiada. Spróbuj ponownie poźniej."];
+      });;
 
       return result;
     }
