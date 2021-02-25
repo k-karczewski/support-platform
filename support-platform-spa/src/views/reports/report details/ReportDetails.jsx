@@ -54,20 +54,13 @@ const ReportDetails = ({ location, match }) => {
     const reportService = new ReportService();
     reportService.postResponse(reportId, message)
       .then(data => {
-        const newResponse = {
-          id: data.id,
-          message: data.message,
-          date: data.date,
-          createdBy: data.createdBy
-        }
-
-        const newModification = {
-          id: data.modificationEntry.id,
-          message: data.modificationEntry.message,
-          date: data.modificationEntry.date,
-        }
-
-        setReportDetails({ ...reportDetails, responses: [...reportDetails.responses, newResponse], modificationEntries: [...reportDetails.modificationEntries, newModification] })
+        setReportDetails(
+          {
+            ...reportDetails,
+            responses: data.responses,
+            modificationEntries: data.modificationEntries
+          }
+        );
       })
       .catch(() => {
         history.push('/error');
