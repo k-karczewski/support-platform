@@ -1,25 +1,17 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SupportPlatform.Database;
 using SupportPlatform.Database.Repositories;
 using SupportPlatform.Helpers;
 using SupportPlatform.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SupportPlatform
 {
@@ -36,9 +28,10 @@ namespace SupportPlatform
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICloudinaryManager, CloudinaryManager>();
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<ICloudinaryManager, CloudinaryManager>();
             services.AddScoped<UserEntityMapper>();
             services.AddScoped<ReportEntityMapper>();
 
@@ -78,12 +71,12 @@ namespace SupportPlatform
             {
                 options.AddPolicy("RequireClientRole", policy =>
                 {
-                   policy.RequireRole("Client");
+                   policy.RequireRole(RoleNames.Client);
                 });
 
                 options.AddPolicy("RequireEmployeeRole", policy =>
                 {
-                    policy.RequireRole("Employee");
+                    policy.RequireRole(RoleNames.Employee);
                 });
             });
         }
