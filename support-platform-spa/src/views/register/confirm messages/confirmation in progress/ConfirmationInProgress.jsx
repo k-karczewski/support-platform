@@ -19,11 +19,10 @@ const ConfirmationInProgress = () => {
     if (userId && token) {
       const data = {
         userId,
-        token
+        emailConfirmationToken: token
       };
 
       const http = new HttpService();
-
       http.sendRequest(`${apiUrl}/auth/confirmEmail`, 'POST', data)
         .then(response => {
           if (!response.ok) {
