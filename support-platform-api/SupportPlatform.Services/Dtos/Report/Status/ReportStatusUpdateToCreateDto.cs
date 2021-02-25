@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SupportPlatform.Services
 {
-    public class ReportStatusToUpdateDto
+    public class ReportStatusUpdateToCreateDto
     {
         [Required]
         public int ReportId { get; set; }

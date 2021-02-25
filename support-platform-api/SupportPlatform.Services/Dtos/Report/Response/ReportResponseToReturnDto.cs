@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SupportPlatform.Services
 {
-    public class ResponseToReturnDto
+    public class ReportResponseToReturnDto
     {
         public int Id { get; set; }
         public string Message { get; set; }

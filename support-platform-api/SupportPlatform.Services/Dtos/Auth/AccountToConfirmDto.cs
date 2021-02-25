@@ -7,6 +7,6 @@ namespace SupportPlatform.Services
         [Required]
         public string UserId { get; set; }
         [Required]
-        public string Token { get; set; }
+        public string EmailConfirmationToken { get; set; }
     }
 }
