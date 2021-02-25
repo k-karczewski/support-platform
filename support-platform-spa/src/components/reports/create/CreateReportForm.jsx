@@ -112,7 +112,7 @@ const CreateReportForm = () => {
       </div>
       {formErrors.length > 0 ? <FormErrorsPanel errors={formErrors} /> : null}
       <Prompt
-        when={heading || message || file}
+        when={heading.length > 0 || message.length > 0 || file}
         message="Masz niezapisane zmiany. 
                 Czy na pewno chcesz opuścić tę stronę?"
       />

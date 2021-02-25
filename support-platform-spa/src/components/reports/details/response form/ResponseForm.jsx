@@ -27,7 +27,7 @@ const ResponseForm = ({ sendResponseHandler }) => {
         <FormSubmitButton text="Wyślij wiadomość" />
       </form>
       <Prompt
-        when={response}
+        when={response.length > 0}
         message="Masz niezapisane zmiany. 
                 Czy na pewno chcesz opuścić tę stronę?"
       />
