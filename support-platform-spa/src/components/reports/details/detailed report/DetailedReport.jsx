@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { EmployeeRoleName } from '../../../../_environments/environment';
 import { ReportStatusConverter } from '../../../../_helpers/ReportStatusConverter';
@@ -19,7 +18,7 @@ const DetailedReport = ({ id, heading, message, date, status, createdBy, attachm
         <h4 className="content__item report__heading">Tytuł: <span>{heading}</span></h4>
         <MessageElement date={date} createdBy={createdBy} message={message} />
         {userRole === EmployeeRoleName ? <StatusEditor currentStatus={status} statusUpdateHandler={statusUpdateHandler} /> : <p className="content__item report__status">Status: <span>{ReportStatusConverter(status)}</span></p>}
-        {attachment ? <p className="content__item report__status">Załącznik: <Link to={attachment.url}>{attachment.name}</Link></p> : null}
+        {attachment ? <p className="content__item report__status">Załącznik: <a href={attachment.url}>{attachment.name}</a></p> : null}
       </section>
     </section>
   );
