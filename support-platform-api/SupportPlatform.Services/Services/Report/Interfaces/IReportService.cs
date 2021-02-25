@@ -42,6 +42,6 @@ namespace SupportPlatform.Services
         /// <param name="statusToUpdate">New status and report identifier</param>
         /// <param name="userId">Identifier of currently authorized user</param>
         /// <returns>Service result with operation status and object to return (Updated modifiation entries and status)</returns>
-        Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusToUpdateDto statusToUpdate, int userId);
+        Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusUpdateToCreateDto statusToUpdate, int userId);
     }
 }

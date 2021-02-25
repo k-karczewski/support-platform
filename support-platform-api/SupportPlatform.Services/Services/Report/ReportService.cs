@@ -194,7 +194,7 @@ namespace SupportPlatform.Services
         /// <param name="statusToUpdate">New status and report identifier</param>
         /// <param name="userId">Identifier of currently authorized user</param>
         /// <returns>Service result with operation status and object to return (Updated modifiation entries and status)</returns>
-        public async Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusToUpdateDto statusToUpdate, int userId)
+        public async Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusUpdateToCreateDto statusToUpdate, int userId)
         {
             try
             {
@@ -243,7 +243,7 @@ namespace SupportPlatform.Services
             switch(status)
             {
                 case StatusEnum.New: return "Nowe";
-                case StatusEnum.Pending: return "W trakcie rozpatrywania";
+                case StatusEnum.InProgress: return "W trakcie rozpatrywania";
                 default: return "Zakończone";
             }
         }

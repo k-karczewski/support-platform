@@ -17,7 +17,7 @@ namespace SupportPlatform.Services
                             .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(y => y.User.UserName));
 
                 config.CreateMap<AttachmentToReturnDto, AttachmentEntity>().ReverseMap();
-                config.CreateMap<ResponseToReturnDto, ResponseEntity>().ReverseMap()
+                config.CreateMap<ReportResponseToReturnDto, ResponseEntity>().ReverseMap()
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(y => y.Date.ToString("dd/MM/yyyy HH:mm:ss")))
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(y => y.User.UserName));
 
@@ -43,7 +43,6 @@ namespace SupportPlatform.Services
         
         public ICollection<ModificationEntryToReturnDto> Map(ICollection<ModificationEntryEntity> modificationEntities) => _mapper.Map<ICollection<ModificationEntryToReturnDto>>(modificationEntities);
 
-        public ResponseToReturnDto Map(ResponseEntity responseEntity) => _mapper.Map<ResponseToReturnDto>(responseEntity);
-        
+        public ReportResponseToReturnDto Map(ResponseEntity responseEntity) => _mapper.Map<ReportResponseToReturnDto>(responseEntity);
     }
 }

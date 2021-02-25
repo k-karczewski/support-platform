@@ -95,7 +95,7 @@ namespace SupportPlatform.Controllers
 
         [HttpPost("change-status")]
         [Authorize(Policy = "RequireEmployeeRole")]
-        public async Task<IActionResult> ChangeStatus(ReportStatusToUpdateDto statusToUpdate)
+        public async Task<IActionResult> ChangeStatus(ReportStatusUpdateToCreateDto statusToUpdate)
         {
             if(ModelState.IsValid)
             {
