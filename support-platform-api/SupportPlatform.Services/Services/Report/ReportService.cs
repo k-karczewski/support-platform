@@ -1,135 +1,103 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SupportPlatform.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SupportPlatform.Services
 {
     public class ReportService : IReportService
     {
-        private readonly IReportRepository _repository;
         private readonly ICloudinaryManager _cloudinaryManager;
-        private readonly UserManager<UserEntity> _userManager;
+        private readonly IEmailSender _emailSender;
+        private readonly IReportRepository _repository;
         private readonly ReportEntityMapper _reportMapper;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public ReportService(IReportRepository repository, UserManager<UserEntity> userManager, ICloudinaryManager cloudinaryManager, ReportEntityMapper reportEntity) 
+        public ReportService(IReportRepository repository, UserManager<UserEntity> userManager,
+                            ICloudinaryManager cloudinaryManager, ReportEntityMapper reportEntity, IEmailSender emailSender) 
         {
-            _repository = repository;
-            _userManager = userManager;
             _cloudinaryManager = cloudinaryManager;
+            _emailSender = emailSender;
+            _repository = repository;
             _reportMapper = reportEntity;
+            _userManager = userManager;
         }
 
-        public async Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsAsync(int reportId, int userId)
-        {
-            try
-            {
-                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
-
-                if (user != null)
-                {
-                    string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
-
-                    ReportEntity report = await _repository.GetReportById(reportId);
-                
-                    if(report != null)
-                    {
-                        ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
-
-                        if(userRole == "Client" && report.UserId != userId)
-                        {
-                            return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
-                        }
-
-                        return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
-                    }
-                }
-                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
-            }
-            catch(Exception)
-            {
-                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas pobierania zgłoszenia" });
-            }
-        }
-
+        /// <summary>
+        /// Creates and adds new report to database 
+        /// </summary>
+        /// <param name="reportToCreate">Report data from creation form</param>
+        /// <param name="userId">Identifier of submitter</param>
+        /// <returns>Service result with operation status and object to return</returns>
         public async Task<IServiceResult<ReportDetailsToReturnDto>> CreateAsync(ReportToCreateDto reportToCreate, int userId)
         {
             try
             {
                 UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(r => r.Reports).FirstOrDefaultAsync();
 
-                if (user != null)
+                ReportEntity report = CreateReport(reportToCreate, userId, user.UserName);
+
+                AttachmentEntity attachment = CreateAttachment(reportToCreate.File, userId);
+                report.Attachment = attachment;
+
+                try
                 {
-                    ReportEntity report = CreateReport(reportToCreate, userId, user.UserName);
-
-                    if (reportToCreate.File.Filename != null && reportToCreate.File.FileInBytes != null)
-                    {
-                        string attachmentUrl = _cloudinaryManager.UploadFile(reportToCreate.File, userId);
-
-                        AttachmentEntity attachment = new AttachmentEntity
-                        {
-                            Name = reportToCreate.File.Filename,
-                            Url = attachmentUrl
-                        };
-
-                        report.Attachment = attachment;
-                    }
-
-                    try 
-                    {
-                        bool result = _repository.AddNew(report);
-                        ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
-                        
-                        return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
-                    }
-                    catch(Exception)
+                    _repository.AddNew(report);
+                }
+                catch (Exception)
+                {
+                    if (report.Attachment != null)
                     {
                         string url = report.Attachment.Url;
-                        await _cloudinaryManager.DeleteFileAsync(url.Substring(url.LastIndexOf('/')+1));
-
-                        if(report.Id != 0)
-                        {
-                            _repository.Delete(report.Id);
-                        }
-
-                        throw;
+                        await _cloudinaryManager.DeleteFileAsync(url.Substring(url.LastIndexOf('/') + 1));
                     }
+
+                    throw;
                 }
-                else
-                {
-                    return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
-                }
+
+                ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
+
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas tworzenia nowego zgłoszenia." });
             }
         }
 
-        private ReportEntity CreateReport(ReportToCreateDto reportData, int userId, string username)
+        /// <summary>
+        /// Gets detailed version of report by id
+        /// </summary>
+        /// <param name="reportId">Identifier of report</param>
+        /// <param name="userId">Identifier of user</param>
+        /// <returns>Service result with operation status and object to return</returns>
+        public async Task<IServiceResult<ReportDetailsToReturnDto>> GetReportDetailsAsync(int reportId, int userId)
         {
-            ReportEntity report = new ReportEntity
+            try
             {
-                Heading = reportData.Heading,
-                Message = reportData.Message,
-                Date = DateTime.Now,
-                ModificationEntries = new List<ModificationEntryEntity>
-                    {
-                        new ModificationEntryEntity
-                        {
-                            Message = $"Klient {username} stworzył/a nowe zgłoszenie o tytule: '{reportData.Heading}'",
-                            Date = DateTime.Now
-                        }
-                    },
-                Status = StatusEnum.New,
-                UserId = userId
-            };
+                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
 
-            return report;
+                string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
+
+                ReportEntity report = await _repository.GetReportById(reportId, userRole, userId);
+                
+                if(report != null)
+                {
+                    ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(report);
+
+                    return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
+                }
+               
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Unauthorized);
+            }
+            catch(Exception)
+            {
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas pobierania zgłoszenia" });
+            }
         }
 
         /// <summary>
@@ -174,41 +142,102 @@ namespace SupportPlatform.Services
             }
         }
 
+        /// <summary>
+        /// Adds new response for report
+        /// </summary>
+        /// <param name="responseToCreate">Data of new response</param>
+        /// <param name="userId">Identifier of currently authorized user</param>
+        /// <returns>Service result with operation status and object to return (Updated details of the report)</returns>
+        public async Task<IServiceResult<ReportDetailsToReturnDto>> SendResponse(ReportResponseToCreateDto responseToCreate, int userId)
+        {
+            try
+            {
+                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
 
+                string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
+
+                ReportEntity reportToUpdate = await _repository.GetReportById(responseToCreate.ReportId, userRole, userId);
+
+                if (reportToUpdate != null)
+                {
+                    ResponseEntity response = new ResponseEntity
+                    {
+                        Date = DateTime.Now,
+                        Message = responseToCreate.Message,
+                        UserId = userId
+                    };
+
+                    reportToUpdate.Responses.Add(response);
+
+                    reportToUpdate.ModificationEntries.Add(HistoryEntriesGenerator.GetNewResponseEntry(user.UserName, reportToUpdate.Heading));
+
+                    _repository.SaveChanges();
+
+                    await SendEmployeeRespondedEmail(reportToUpdate.UserId, reportToUpdate.Heading);
+
+                    ReportDetailsToReturnDto reportToReturn = _reportMapper.Map(reportToUpdate);
+
+                    return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Correct, reportToReturn);
+                }
+
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Failed, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            }
+            catch (Exception)
+            {
+                return new ServiceResult<ReportDetailsToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            }
+        }
+
+        /// <summary>
+        /// Updates status of report
+        /// </summary>
+        /// <param name="statusToUpdate">New status and report identifier</param>
+        /// <param name="userId">Identifier of currently authorized user</param>
+        /// <returns>Service result with operation status and object to return (Updated modifiation entries and status)</returns>
         public async Task<IServiceResult<ReportStatusUpdateToReturnDto>> UpdateStatus(ReportStatusToUpdateDto statusToUpdate, int userId)
         {
-            UserEntity user = await _userManager.FindByIdAsync(userId.ToString());
-
-            if(user != null)
+            try
             {
-                ReportEntity reportToUpdate = await _repository.GetReportById(statusToUpdate.ReportId);
+                UserEntity user = await _userManager.Users.Where(x => x.Id == userId).Include(ur => ur.UserRoles).ThenInclude(r => r.Role).FirstOrDefaultAsync();
+
+                string userRole = user.UserRoles.Select(x => x.Role).FirstOrDefault().Name;
+
+                ReportEntity reportToUpdate = await _repository.GetReportById(statusToUpdate.ReportId, userRole, userId);
 
                 if(reportToUpdate != null)
                 {
                     reportToUpdate.Status = (StatusEnum)Enum.Parse(typeof(StatusEnum), statusToUpdate.NewStatus.ToString());
+
                     string statusName = ConvertToStatusName(reportToUpdate.Status);
 
-                    reportToUpdate.ModificationEntries.Add(new ModificationEntryEntity
-                    {
-                        Date = DateTime.Now,
-                        Message = $"Pracownik {user.UserName} zmienił status zgłoszenia na '{statusName}'"
-                    });
+                    reportToUpdate.ModificationEntries.Add(HistoryEntriesGenerator.GetStatusUpdatedEntry(user.UserName, statusName));
 
                     _repository.SaveChanges();
 
+                    await SendStatusChangedEmail(reportToUpdate.UserId, reportToUpdate.Heading, reportToUpdate.Status);
 
                     ReportStatusUpdateToReturnDto statusUpdated = new ReportStatusUpdateToReturnDto
                     {
                         ModificationEntries = _reportMapper.Map(reportToUpdate.ModificationEntries).ToList(),
-                        Status = (int)reportToUpdate.Status
+                        Status = statusToUpdate.NewStatus
                     };
 
                     return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Correct, statusUpdated);
                 }
+           
+                return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
             }
-            return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            catch(Exception)
+            {
+                return new ServiceResult<ReportStatusUpdateToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+            }
         }
 
+        /// <summary>
+        /// Converts status enum to string value
+        /// </summary>
+        /// <param name="status">Report status enum</param>
+        /// <returns>String value of parameter</returns>
         private string ConvertToStatusName(StatusEnum status)
         {
             switch(status)
@@ -219,54 +248,57 @@ namespace SupportPlatform.Services
             }
         }
 
-        public async Task<IServiceResult<ResponseToReturnDto>> SendResponse(ReportResponseToCreateDto responseToCreate, int userId)
+        /// <summary>
+        /// Creates attachment if file has been received. Returns null otherwise.
+        /// </summary>
+        /// <param name="file">Attachment data</param>
+        /// <param name="userId">Identifier of submitter</param>
+        /// <returns>Generated attachment entity or null</returns>
+        private AttachmentEntity CreateAttachment(FileToUploadDto file, int userId)
         {
-            try
+            if (file.Filename != null && file.FileInBytes != null)
             {
-                UserEntity user = await _userManager.FindByIdAsync(userId.ToString());
+                string attachmentUrl = _cloudinaryManager.UploadFile(file, userId);
 
-                if (user != null)
+                AttachmentEntity attachment = new AttachmentEntity
                 {
-                    ReportEntity reportToUpdate = await _repository.GetReportById(responseToCreate.ReportId);
+                    Name = file.Filename,
+                    Url = attachmentUrl
+                };
 
-                    if (reportToUpdate != null)
-                    {
-                        ResponseEntity response = new ResponseEntity
-                        {
-                            Date = DateTime.Now,
-                            Message = responseToCreate.Message,
-                            UserId = userId
-                        };
-
-                        reportToUpdate.Responses.Add(response);
-
-                        reportToUpdate.ModificationEntries.Add(new ModificationEntryEntity
-                        {
-                            Date = DateTime.Now,
-                            Message = $"Pracownik {user.UserName} odpowiedział na zgłoszenie ${reportToUpdate.Heading}"
-                        });
-
-                        _repository.SaveChanges();
-
-
-                        ResponseToReturnDto responseToReturn = _reportMapper.Map(response);
-                        responseToReturn.ModificationEntry = new ModificationEntryToReturnDto
-                        {
-                            Date = DateTime.Now.ToString(),
-                            Message = $"Pracownik {user.UserName} odpowiedział na zgłoszenie ${reportToUpdate.Heading}"
-                        };
-
-                        return new ServiceResult<ResponseToReturnDto>(ResultType.Correct, responseToReturn);
-                    }
-                }
-
-                return new ServiceResult<ResponseToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
+                return attachment;
             }
-            catch(Exception e)
+
+            return null;
+        }
+
+        /// <summary>
+        /// Created new Report Entity object based on ReportToCreateDto
+        /// </summary>
+        /// <param name="reportData">Data for new report</param>
+        /// <param name="userId">Identifier of sumbitter</param>
+        /// <param name="username">Username of submitter</param>
+        /// <returns>Created instance of ReportEntity</returns>
+        private ReportEntity CreateReport(ReportToCreateDto reportData, int userId, string username)
+        {
+            ReportEntity report = new ReportEntity
             {
-                return new ServiceResult<ResponseToReturnDto>(ResultType.Error, new List<string> { "Błąd podczas aktualizacji zgłoszenia" });
-            }
+                Heading = reportData.Heading,
+                Message = reportData.Message,
+                Date = DateTime.Now,
+                ModificationEntries = new List<ModificationEntryEntity>
+                    {
+                        new ModificationEntryEntity
+                        {
+                            Message = $"Klient {username} stworzył(a) nowe zgłoszenie o tytule: '{reportData.Heading}'",
+                            Date = DateTime.Now
+                        }
+                    },
+                Status = StatusEnum.New,
+                UserId = userId
+            };
 
+            return report;
         }
 
         /// <summary>
@@ -288,7 +320,30 @@ namespace SupportPlatform.Services
                         .ThenByDescending(d => d.Date.TimeOfDay)
                         .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
                         .Take(paginationParameters.PageSize);
+        }
 
+        /// <summary>
+        /// Sends email with status changed information
+        /// </summary>
+        /// <param name="recipentId">Identifier of recipent</param>
+        /// <param name="reportHeading">Heading of report</param>
+        /// <param name="statusEnum">New status of report</param>
+        private async Task SendStatusChangedEmail(int recipentId, string reportHeading, StatusEnum statusEnum)
+        {
+            UserEntity recipent = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == recipentId);
+            string status = ConvertToStatusName(statusEnum);
+            await _emailSender.SendStatusChanged(recipent.UserName, recipent.Email, reportHeading, status);
+        }
+
+        /// <summary>
+        /// Sends email with information about new response
+        /// </summary>
+        /// <param name="recipentId">Identifier of recipent</param>
+        /// <param name="reportHeading">Heading of report</param>
+        private async Task SendEmployeeRespondedEmail(int recipentId, string reportHeading)
+        {
+            UserEntity recipent = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == recipentId);
+            await _emailSender.SendEmployeeResponded(recipent.UserName, recipent.Email, reportHeading);
         }
     }
 }

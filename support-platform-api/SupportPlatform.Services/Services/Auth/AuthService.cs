@@ -18,13 +18,16 @@ namespace SupportPlatform.Services
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly RoleManager<RoleEntity> _roleManager;
         private readonly UserEntityMapper _userMapper;
+        private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
 
-        public AuthService(SignInManager<UserEntity> signInManager, RoleManager<RoleEntity> roleManager, UserEntityMapper userMapper, IConfiguration configuration)
+        public AuthService(SignInManager<UserEntity> signInManager, RoleManager<RoleEntity> roleManager, 
+                            UserEntityMapper userMapper,IConfiguration configuration, IEmailSender emailSender)
         {
             _signInManager = signInManager;
             _roleManager = roleManager;
             _userMapper = userMapper;
+            _emailSender = emailSender;
             _configuration = configuration;
         }
 
@@ -150,12 +153,8 @@ namespace SupportPlatform.Services
             // get link to client application
             string callbackUrl = GetCallbackUrl(user.Id, confirmationToken);
 
-            // create email sender instance
-            using (var emailSender = new EmailSender(_configuration))
-            {
-                // send email
-                await emailSender.SendAccountConfirmation(user, callbackUrl);
-            }
+            // send email
+            await _emailSender.SendAccountConfirmation(user.UserName, user.Email, callbackUrl);
         }
 
         private List<string> GetErrorsFromResult(IdentityResult result)

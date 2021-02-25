@@ -23,7 +23,7 @@ namespace SupportPlatform.Controllers
         }
 
         [HttpGet("{id}", Name = "GetReportDetails")]
-        public async Task<IActionResult> GetReportForClientAsync(int id)
+        public async Task<IActionResult> GetReportDetailsAsync(int id)
         {
             if(ModelState.IsValid)
             {
@@ -116,7 +116,7 @@ namespace SupportPlatform.Controllers
         {
             if (ModelState.IsValid)
             {
-                IServiceResult<ResponseToReturnDto> result = await _reportService.SendResponse(reportResponse, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+                IServiceResult<ReportDetailsToReturnDto> result = await _reportService.SendResponse(reportResponse, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 
                 if (result.Result == ResultType.Correct)
                 {
@@ -126,6 +126,5 @@ namespace SupportPlatform.Controllers
 
             return BadRequest();
         }
-
     }
 }

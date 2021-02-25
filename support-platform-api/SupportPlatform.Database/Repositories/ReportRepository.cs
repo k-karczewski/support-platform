@@ -25,14 +25,22 @@ namespace SupportPlatform.Database.Repositories
         }
 
 
-        public async Task<ReportEntity> GetReportById(int id)
+        public async Task<ReportEntity> GetReportById(int reportId, string role, int userId)
         {
-            return await _dbSet
+            ReportEntity report = await _dbSet
                             .Include(r => r.Responses)
                             .Include(m => m.ModificationEntries)
                             .Include(a => a.Attachment)
                             .Include(u => u.User)
-                            .FirstOrDefaultAsync(x => x.Id == id);
+                            .FirstOrDefaultAsync(x => x.Id == reportId);
+            switch (role)
+            {
+                case RoleNames.Client:
+                    if (report.UserId != userId) return null;
+                    return report; 
+                default:
+                    return report;
+            }
         }
     }
 }

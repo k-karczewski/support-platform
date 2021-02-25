@@ -38,7 +38,6 @@ namespace SupportPlatform.Services
         public ReportEntity Map(ReportDetailsToReturnDto reportDetailsToReturn) => _mapper.Map<ReportEntity>(reportDetailsToReturn);
         
         public ReportDetailsToReturnDto Map(ReportEntity reportEntity) => _mapper.Map<ReportDetailsToReturnDto>(reportEntity);
-        
 
         public ICollection<ReportListItemToReturnDto> Map(ICollection<ReportEntity> reportEntities) => _mapper.Map<ICollection<ReportListItemToReturnDto>>(reportEntities);
         
