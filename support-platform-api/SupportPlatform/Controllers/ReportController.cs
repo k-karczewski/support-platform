@@ -32,11 +32,11 @@ namespace SupportPlatform.Controllers
                     return Ok(result.ReturnedObject);
                 }
 
-                return BadRequest();
+                return BadRequest(new { errors = result.Errors });
             }
             else
             {
-                return BadRequest(ModelState.Values);
+                return BadRequest(new { errors = ModelState.Values });
             }
         }
 
@@ -57,7 +57,7 @@ namespace SupportPlatform.Controllers
             }
             else
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new { errors = result.Errors });
             }
         }
 
@@ -74,18 +74,14 @@ namespace SupportPlatform.Controllers
                 {
                     return CreatedAtRoute("GetReportDetails", new { id = result.ReturnedObject.Id}, result.ReturnedObject);
                 }
-                else if(result.Result == ResultType.Unauthorized)
-                {
-                    return Unauthorized();
-                }
                 else
                 {
-                    return BadRequest(result.Errors);
+                    return BadRequest(new { errors = result.Errors });
                 }
             }
             else
             {
-                return BadRequest(ModelState.Values);
+                return BadRequest(new { errors = ModelState.Values });
             }
         }
 
@@ -101,9 +97,12 @@ namespace SupportPlatform.Controllers
                 {
                     return Ok(result.ReturnedObject);
                 }
+
+                return BadRequest(new { errors = result.Errors });
             }
 
-            return BadRequest();
+            return BadRequest(new { errors = ModelState.Values });
+
         }
 
         [HttpPost("send-response")]
@@ -118,9 +117,11 @@ namespace SupportPlatform.Controllers
                 {
                     return Ok(result.ReturnedObject);
                 }
+
+                return BadRequest(new { errors = result.Errors });
             }
 
-            return BadRequest();
+            return BadRequest(new { errors = ModelState.Values });
         }
     }
 }
