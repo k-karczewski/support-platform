@@ -14,10 +14,9 @@ export default class ReportService {
         if (response.ok) {
           return json;
         }
-        return new Error(json)
+        return Promise.reject(json)
       })
   }
-
 
   getReportDetailsById = (reportId) => {
     return this.http.sendRequest(`${apiUrl}/report/${reportId}`, 'get')
@@ -59,7 +58,7 @@ export default class ReportService {
         if (response.ok) {
           return json;
         }
-        return new Error(json)
+        return Promise.reject(json)
       })
   }
 
@@ -75,7 +74,7 @@ export default class ReportService {
         if (response.ok) {
           return json;
         }
-        return new Error(json)
+        return Promise.reject(json)
       })
   }
 }
