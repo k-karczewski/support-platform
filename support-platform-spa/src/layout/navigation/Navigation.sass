@@ -1,10 +1,11 @@
+@import '../../_styles/mixins'
+@import '../../_styles/variables'
+
 .nav
-  display: flex
-  justify-content: space-between
-  align-items: center
   padding: 0 50px
   height: 7vh
   background-color: #222
+  @include flex-position(row, space-between, center)
 
   .nav__logo
     a
@@ -16,10 +17,9 @@
       text-decoration: none
 
   .nav__links
-    display: flex
-    justify-content: space-around
     width: 18%
     list-style-type: none
+    @include flex-position(row, space-around, flex-start)
 
     .nav__link
       a
@@ -33,5 +33,112 @@
         font-size: .95em
 
         &:hover
-          color: #fff
-          background-color: #000
+          color: $white
+          background-color: $black
+
+@media (max-width: 1640px)
+  .nav
+    .nav__logo
+      a
+        font-size: 1em
+
+    .nav__links
+      width: 25%
+
+@media (max-width: 1140px)
+  .nav
+    .nav__links
+      width: 33.333%
+
+@media (max-width: 1024px) and (orientation: portrait)
+  .nav
+    .nav__logo
+      a
+        font-size: 1.25em
+
+    .nav__links
+      width: 40%
+
+      .nav__link
+        a
+          font-size: 1.1em
+
+@media (max-width: 768px) and (orientation: portrait)
+  .nav
+    .nav__logo
+      a
+        font-size: 1em
+
+    .nav__links
+      width: 50%
+
+      .nav__link
+        a
+          font-size: 1em
+
+@media (max-width: 414px) and (orientation: portrait)
+  .nav
+    padding: 0 20px
+    .nav__logo
+      a
+        font-size: .6em
+
+    .nav__links
+      width: 55%
+      justify-content: flex-end
+
+      .nav__link
+        a
+          font-size: .7em
+          padding: 0 5px
+
+@media (max-width: 375px) and (orientation: portrait)
+  .nav
+    height: 8vh
+    padding: 0 10px
+
+    .nav__links
+      width: 60%
+
+@media (max-width: 320px) and (orientation: portrait)
+  .nav
+    padding: 0 10px
+
+    .nav__logo
+      a
+        font-size: .6em
+
+    .nav__links
+      width: 65%
+
+@media (max-width: 812px) and (orientation: landscape)
+  .nav
+    height: 15vh
+
+    .nav__logo
+      a
+        line-height: 15vh
+        font-size: 1.25em
+
+    .nav__links
+      width: 50%
+
+      .nav__link
+        a
+          padding: 0
+
+@media (max-width: 568px) and (orientation: landscape)
+  .nav
+    padding: 0 20px
+
+    .nav__logo
+      a
+        line-height: 15vh
+        font-size: 1em
+
+    .nav__links
+      width: 50%
+
+      .nav__link
+        a
+          padding: 0
