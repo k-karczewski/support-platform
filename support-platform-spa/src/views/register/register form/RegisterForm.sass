@@ -1,5 +1,5 @@
 .register
-  min-height: 90vh
+  min-height: 88vh
   display: flex
   justify-content: center
   align-items: center
@@ -27,3 +27,89 @@
         font-weight: bold
         background-color: #0086df
         cursor: pointer
+
+@media (max-width: 1640px)
+  .register
+    .container
+      width: 33.333%
+
+@media (max-width: 1340px)
+  .register
+    .container
+      width: 40%
+
+@media (max-width: 1140px)
+  .register
+    .container
+      width: 45%
+      .register__form
+        height: 50vh
+        padding: 20px 35px 35px 35px
+
+@media (max-width: 1024px) and (orientation: portrait)
+  .register
+    .container
+      width: 45%
+
+      .register__form
+        height: 35vh
+
+@media (max-width: 768px) and (orientation: portrait)
+  .register
+    .container
+      width: 55%
+
+      .register__form
+        height: 45vh
+
+@media (max-width: 414px) and (orientation: portrait)
+  .register
+    min-height: 87vh
+    flex-direction: column-reverse
+    padding-bottom: 15px
+    .container
+      width: 85%
+
+      .register__form
+        height: 60vh
+
+@media (max-width: 375px) and (orientation: portrait)
+  .register
+    min-height: 85vh
+
+    .container
+      width: 90%
+
+@media (max-width: 375px) and (min-height: 812px) and (orientation: portrait)
+  .register
+    .container
+      .register__form
+        height: 50vh
+
+@media (max-width: 320px) and (orientation: portrait)
+  .register
+    .container
+      .register__form
+        padding: 10px 20px 0 20px
+
+@media (max-width: 1024px) and (orientation: landscape)
+  .register
+    .container
+      width: 45%
+
+      .register__form
+        height: 60vh
+
+@media (max-width: 812px) and (orientation: landscape)
+  .register
+    padding: 25px 0
+    .container
+      width: 45%
+
+      .register__form
+        height: 110vh
+
+@media (max-width: 568px) and (orientation: landscape)
+  .register
+    .container
+      width: 50%
