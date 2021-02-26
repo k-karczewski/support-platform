@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './Error.sass';
+import './AuthError.sass';
 
-const Error = () => {
+const AuthError = () => {
   return (
     <section className="error__view">
       <h2>Ups... Coś poszło nie tak :(</h2>
@@ -11,4 +11,4 @@ const Error = () => {
   );
 }
 
-export default Error;
+export default AuthError;
