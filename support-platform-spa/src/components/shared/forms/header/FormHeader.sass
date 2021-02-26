@@ -1,7 +1,8 @@
+@import ../../../../_styles/variables.sass
+
 .form__header
   padding: 10px 50px 0px 50px
-  text-align: left
-  border-bottom: 1px solid #aaa
+  border-bottom: 1px solid $gray
 
   .form__heading
     font-size: 2.25em
@@ -9,5 +10,33 @@
 
   .form__description
     font-size: 1.2em
-    color: #aaa
-    padding: 0px 0 30px 0
+    color: $gray
+    padding-bottom: 30px
+
+@media (max-width: 1140px)
+  .form__header
+    padding: 10px 30px 0px 30px
+
+@media (max-width: 320px) and (orientation: portrait)
+  .form__header
+    padding: 10px 25px 0px 25px
+
+    .form__heading
+      font-size: 2em
+      padding: 0
+
+    .form__description
+      font-size: 1em
+      padding-bottom: 20px
+
+@media (max-width: 812px) and (orientation: landscape)
+  .form__header
+    padding: 10px 30px 0px 30px
+
+    .form__heading
+      font-size: 2em
+      padding: 10px 0
+
+    .form__description
+      font-size: 1em
+      padding-bottom: 20px

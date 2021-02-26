@@ -1,3 +1,5 @@
+@import ../../../../_styles/variables.sass
+
 .textInput__label
   width: 100%
   margin: 10px auto
@@ -9,12 +11,31 @@
     height: 45px
     padding: 5px 15px
     margin: 10px 0
-    background-color: #f6f6f6
+    background-color: $lightGray
     border: 1px solid #d0d0d0
     border-radius: 8px
     display: block
-    font-family: 'Roboto', sans-serif
+    font-family: inherit
     font-size: 1em
 
     &:focus
-      border-color: #3598DC
+      border-color: $lightBlue
+
+@media (max-width: 320px) and (orientation: portrait)
+  .textInput__label
+    margin: 5px auto
+
+    .textInput__input
+      margin: 5px 0
+
+@media (max-width: 812px) and (orientation: landscape)
+  .textInput__label
+    margin: 5px auto
+
+    .textInput__input
+      margin: 5px 0
+
+@media (max-width: 568px) and (orientation: landscape)
+  .textInput__label
+    .textInput__input
+      margin: 0
