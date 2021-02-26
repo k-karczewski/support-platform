@@ -14,6 +14,7 @@ const ReportsOverview = () => {
   const [reports, setReports] = useState([]);
   const [statusFilter, setStatusFilter] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+  const [errors, setErrors] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +29,14 @@ const ReportsOverview = () => {
         .then(data => {
           setTotalPages(data.totalPages);
           setReports(data.reportListItems);
+        })
+        .catch(errors => {
+          if (errors.errors) {
+            setErrors(errors.errors)
+          } else {
+            setErrors(["Błąd podczas komunikacji z serwerem. Spróbuj ponownie później."])
+          }
+
         });
     }
 
@@ -54,7 +63,9 @@ const ReportsOverview = () => {
     } else {
       heading = "Wszystkie zgłoszenia"
     }
-    return <ReportList heading={heading} reports={reports} />
+
+    const message = errors.length === 0 ? "Nie ma nic do wyświetlenia :(" : errors[0];
+    return <ReportList heading={heading} reports={reports} message={message} />
   }
 
   return (

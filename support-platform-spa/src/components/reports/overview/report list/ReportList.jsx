@@ -5,7 +5,7 @@ import ReportListItem from './report list item/ReportListItem';
 
 import './ReportList.sass';
 
-const ReportList = ({ heading, reports }) => {
+const ReportList = ({ heading, reports, message }) => {
 
   const getReportItems = () => {
     if (reports && reports.length > 0) {
@@ -21,7 +21,7 @@ const ReportList = ({ heading, reports }) => {
       return reportItems;
     } else {
       return (
-        <p>Nie ma nic do wyświetlenia :(</p>
+        <p>{message}</p>
       );
     }
   }
