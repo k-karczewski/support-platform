@@ -53,7 +53,11 @@ const CreateReportForm = () => {
           })
         })
         .catch(errors => {
-          setFormErrors(errors)
+          if (errors.errors) {
+            setFormErrors(errors.errors)
+          } else {
+            setFormErrors(["Serwer nie odpowiada. Spróbuj ponownie poźniej."])
+          }
         });
 
       setHeading('');
