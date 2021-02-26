@@ -33,7 +33,7 @@ const ReportDetails = ({ location, match }) => {
           setReportDetails(data)
         })
         .catch(() => {
-          history.push('/error');
+          history.push('/error-server');
         });
     }
   }, [reportDetails, reportId, history])
@@ -46,7 +46,7 @@ const ReportDetails = ({ location, match }) => {
         setReportDetails({ ...reportDetails, status: data.status, modificationEntries: data.modificationEntries })
       })
       .catch(() => {
-        history.push('/error');
+        history.push('/error-server');
       });
   }
 
@@ -63,7 +63,7 @@ const ReportDetails = ({ location, match }) => {
         );
       })
       .catch(() => {
-        history.push('/error');
+        history.push('/error-server');
       });
   }
 
