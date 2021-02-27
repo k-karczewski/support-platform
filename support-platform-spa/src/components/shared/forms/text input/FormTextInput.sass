@@ -2,7 +2,7 @@
 
 .textInput__label
   width: 100%
-  margin: 10px auto
+  margin: 5px auto
   font-size: .9em
   font-family: 'Roboto', sans-serif
 
@@ -21,11 +21,17 @@
     &:focus
       border-color: $lightBlue
 
-@media (max-width: 500px)
+@media (max-width: 1024px)
   .textInput__label
-    margin: 5px auto
-
     .textInput__input
       height: 40px
 
+@media (max-width: 500px)
+  .textInput__label
+    margin: 0px auto
 
+@media (max-width: 320px)
+  .textInput__label
+    font-size: .75em
+    .textInput__input
+      height: 30px
