@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-const UnauthorizedRoute = ({ component: Component, authCondition, ...rest }) => {
+const UnauthorizedRoute = ({ component: Component, isAuthenticated, ...rest }) => {
   return (
     <Route {...rest} render={(props) => (
-      authCondition() === false
+      isAuthenticated() === false
         ? <Component {...props} />
         : <Redirect to='/reports' />
     )} />
