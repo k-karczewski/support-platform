@@ -87,7 +87,7 @@ namespace SupportPlatform.Services
                 HtmlContent = messageContent,
             };
 
-            var recipent = new EmailAddress("kkarczewski94@gmail.com", username);
+            var recipent = new EmailAddress(emailAddress, username);
             message.AddTo(recipent);
 
             SendGridClient client = new SendGridClient(_configuration.GetSection("SendGridKeys:DefaultKey").Value);
