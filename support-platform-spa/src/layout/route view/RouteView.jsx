@@ -47,9 +47,6 @@ const RouterView = () => {
 
       <ClientRoute path="/reports/create" exact component={CreateReport} isAuthenticated={isUserAuthenticated} role={getUsersRole} />
 
-      <UnauthorizedRoute path="/tmp" component={ConfirmationMessage} isAuthenticated={() => false} />
-
-
       {/* default route */}
       <UserRoute component={AuthError} isAuthenticated={isUserAuthenticated} />
     </Switch>
