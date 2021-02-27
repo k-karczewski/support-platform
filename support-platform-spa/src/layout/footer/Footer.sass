@@ -1,8 +1,13 @@
+@import '../../_styles/mixins'
+@import '../../_styles/variables'
+
 footer
-  height: 5vh
-  display: flex
-  justify-content: center
-  align-items: center
-  color: #ddd
+  height: 50px
+  color: $gray
   text-transform: lowercase
-  background-color: #000
+  background-color: $black
+  @include flex-position(row ,center , center)
+
+@media (max-width: 1024px)
+  footer
+    margin-top: 15px

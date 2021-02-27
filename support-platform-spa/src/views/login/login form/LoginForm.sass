@@ -2,17 +2,18 @@
 @import ../../../_styles/variables.sass
 
 .login
-  min-height: 88vh
+  min-height: calc(100vh - 115px)
   @include flex-position
 
   .container
-    width: 28%
+    width: 480px
+    margin: 0 10px
     padding-top: 15px
     background-color: $white
     @include box-shadow
 
     .login__form
-      height: 50vh
+      height: 450px
       padding: 0px 50px 35px 50px
       @include flex-position(column, center, flex-start)
 
@@ -27,86 +28,25 @@
         &:hover
           text-decoration: underline
 
-@media (max-width: 1640px)
+@media (max-width: 1024px)
   .login
-    .container
-      width: 33.333%
-
-@media (max-width: 1340px)
-  .login
-    .container
-      width: 38%
-
-@media (max-width: 1140px)
-  .login
-    .container
-      .login__form
-        height: 50vh
-        padding: 0px 35px 35px 35px
-
-@media (max-width: 1024px) and (orientation: portrait)
-  .login
-    .container
-      width: 45%
-
-      .login__form
-        height: 35vh
-
-        .form__registerLink
-          font-size: 1em
-
-@media (max-width: 768px) and (orientation: portrait)
-  .login
-    .container
-      width: 55%
-
-      .login__form
-        height: 40vh
-
-        .form__registerLink
-          font-size: 1em
-
-@media (max-width: 414px) and (orientation: portrait)
-  .login
-    min-height: 87vh
+    min-height: calc(100vh - 130px)
     flex-direction: column-reverse
 
-    .container
-      width: 85%
-
-      .login__form
-        height: 50vh
-
-@media (max-width: 375px) and (orientation: portrait)
-  .login
-    min-height: 85vh
-    .container
-      width: 90%
-
-@media (max-width: 320px) and (orientation: portrait)
+@media (max-width: 500px)
   .login
     .container
-      .login__form
-        height: 52vh
-        padding: 0px 20px 10px 20px
-
-        .form__registerLink
-          font-size: .9em
-
-@media (max-width: 812px) and (orientation: landscape)
-  .login
-    margin: 30px 0
-
-    .container
-      width: 50%
+      width: 350px
 
       .login__form
-        height: 90vh
+        height: 350px
+        padding: 0px 30px 35px 30px
 
-@media (max-width: 568px) and (orientation: landscape)
+@media (max-width: 320px)
   .login
     .container
-      width: 55%
+      width: 280px
 
       .login__form
-        height: 95vh
+        height: 300px
+        padding: 0px 20px 20px 20px

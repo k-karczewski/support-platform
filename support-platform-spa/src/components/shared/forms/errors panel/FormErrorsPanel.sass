@@ -2,10 +2,10 @@
 @import '../../../../_styles/variables'
 
 .error__list
-  width: 18%
+  width: 380px
   padding: 20px
   background-color: $white
-  margin-left: 50px
+  margin-left: 30px
   @include box-shadow
 
   h2
@@ -23,38 +23,16 @@
       .error__item
         color: darkred
 
-@media (max-width: 1640px)
+@media (max-width: 1024px)
   .error__list
-    width: 22%
+    width: 480px
+    margin: 20px 0
 
-@media (max-width: 1340px)
+@media (max-width: 500px)
   .error__list
-    width: 28%
+    width: 350px
+    padding: 15px
 
-@media (max-width: 1024px) and (orientation: portrait)
+@media (max-width: 320px)
   .error__list
-    width: 28%
-
-@media (max-width: 768px) and (orientation: portrait)
-  .error__list
-    width: 35%
-    margin-left: 20px
-
-@media (max-width: 414px) and (orientation: portrait)
-  .error__list
-    width: 85%
-    margin: 25px 0 25px 0
-
-@media (max-width: 375px) and (orientation: portrait)
-  .error__list
-    width: 90%
-
-@media (max-width: 812px) and (orientation: landscape)
-  .error__list
-    width: 33.333%
-    margin-left: 20px
-
-@media (max-width: 568px) and (orientation: landscape)
-  .error__list
-    width: 37%
-    margin-left: 10px
+    width: 280px
