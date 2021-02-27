@@ -8,10 +8,45 @@
 
   h4
     padding: 5px 0
-    font-size: 1.1em 
+    font-size: 1.1em
 
   label.textArea__label
     textarea.textArea__input
-      height: auto 
+      height: auto
       overflow: auto
-    
+
+@media (max-width: 768px)
+  .reponse__item
+    padding: 15px 10px 20px 10px
+    border: 1px solid #ddd
+    margin-bottom: 20px
+
+    &:nth-last-child(1)
+      margin-bottom: 10px
+
+    h4
+      padding: 5px 0
+      font-size: 1.1em
+
+    label.textArea__label
+      textarea.textArea__input
+        height: auto
+        overflow: auto
+
+@media (max-width: 320px)
+  .reponse__item
+    padding: 15px 5px 20px 5px
+    border: 1px solid #ddd
+    margin-bottom: 20px
+
+    &:nth-last-child(1)
+      margin-bottom: 10px
+
+    h4
+      padding: 5px 0
+      font-size: 1.1em
+
+    label.textArea__label
+      textarea.textArea__input
+        height: auto
+        overflow: auto
