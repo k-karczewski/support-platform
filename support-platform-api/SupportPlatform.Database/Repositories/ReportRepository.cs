@@ -29,6 +29,7 @@ namespace SupportPlatform.Database.Repositories
         {
             ReportEntity report = await _dbSet
                             .Include(r => r.Responses)
+                            .ThenInclude(u => u.User)
                             .Include(m => m.ModificationEntries)
                             .Include(a => a.Attachment)
                             .Include(u => u.User)
