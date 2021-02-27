@@ -31,26 +31,28 @@ const RouterView = () => {
   }
 
   return (
-    <div className="containter">
-      <Switch>
-        <UnauthorizedRoute path="/login" component={LoginForm} authCondition={isUserAuthenticated} />
-        <UnauthorizedRoute path="/register" component={RegisterForm} authCondition={isUserAuthenticated} />
-        <UnauthorizedRoute path="/confirmMessage" component={ConfirmationMessage} authCondition={isUserAuthenticated} />
-        <UnauthorizedRoute path="/confirmInProgress" component={ConfirmationInProgress} authCondition={isUserAuthenticated} />
-        <UnauthorizedRoute path="/accountCreated" component={AccountCreated} authCondition={isUserAuthenticated} />
 
-        <UserRoute path="/" exact component={ReportsOverview} isAuthenticated={isUserAuthenticated} />
-        <UserRoute path="/reports" exact component={ReportsOverview} isAuthenticated={isUserAuthenticated} />
-        <UserRoute path="/reports/details/:id" exact component={ReportDetails} isAuthenticated={isUserAuthenticated} />
-        <UserRoute path="/error-auth" component={AuthError} isAuthenticated={isUserAuthenticated} />
-        <UserRoute path="/error-server" component={ServerError} isAuthenticated={isUserAuthenticated} />
+    <Switch>
+      <UnauthorizedRoute path="/login" component={LoginForm} isAuthenticated={isUserAuthenticated} />
+      <UnauthorizedRoute path="/register" component={RegisterForm} isAuthenticated={isUserAuthenticated} />
+      <UnauthorizedRoute path="/confirmMessage" component={ConfirmationMessage} isAuthenticated={isUserAuthenticated} />
+      <UnauthorizedRoute path="/confirmInProgress" component={ConfirmationInProgress} isAuthenticated={isUserAuthenticated} />
+      <UnauthorizedRoute path="/accountCreated" component={AccountCreated} isAuthenticated={isUserAuthenticated} />
 
-        <ClientRoute path="/reports/create" exact component={CreateReport} isAuthenticated={isUserAuthenticated} role={getUsersRole} />
+      <UserRoute path="/" exact component={ReportsOverview} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/reports" exact component={ReportsOverview} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/reports/details/:id" exact component={ReportDetails} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/error-auth" component={AuthError} isAuthenticated={isUserAuthenticated} />
+      <UserRoute path="/error-server" component={ServerError} isAuthenticated={isUserAuthenticated} />
 
-        {/* default route */}
-        <UserRoute component={AuthError} isAuthenticated={isUserAuthenticated} />
-      </Switch>
-    </div>
+      <ClientRoute path="/reports/create" exact component={CreateReport} isAuthenticated={isUserAuthenticated} role={getUsersRole} />
+
+      <UnauthorizedRoute path="/tmp" component={ConfirmationMessage} isAuthenticated={() => false} />
+
+
+      {/* default route */}
+      <UserRoute component={AuthError} isAuthenticated={isUserAuthenticated} />
+    </Switch>
   );
 }
 
