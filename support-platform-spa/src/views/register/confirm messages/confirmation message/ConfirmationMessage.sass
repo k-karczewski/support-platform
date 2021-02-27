@@ -2,7 +2,7 @@
 @import '../../../../_styles/variables'
 
 .confirmation__message
-  height: 88vh
+  min-height: calc(100vh - 115px)
   width: 80%
   margin: 0 auto
   font-size: 2em
@@ -10,24 +10,19 @@
   text-align: center
   @include flex-position(column, center, center)
 
-@media (max-width: 414px) and (orientation: portrait)
+@media (max-width: 1024px)
   .confirmation__message
-    height: 87vh
-    font-size: 1.5em
+    width: 90%
+    min-height: calc(100vh - 130px)
 
-@media (max-width: 375px) and (orientation: portrait)
+@media (max-width: 768px)
   .confirmation__message
-    height: 85vh
+    font-size: 1.6em
+
+@media (max-width: 500px)
+  .confirmation__message
     font-size: 1.25em
 
-@media (max-width: 320px) and (orientation: portrait)
+@media (max-width: 320px)
   .confirmation__message
     font-size: 1em
-
-@media (max-width: 812px) and (orientation: landscape)
-  .confirmation__message
-    height: 80vh
-
-@media (max-width: 576px) and (orientation: landscape)
-  .confirmation__message
-    font-size: 1.5em
