@@ -1,8 +1,10 @@
+@import '../../../../_styles/mixins'
+@import '../../../../_styles/variables'
+
 .status__editor
   padding: 15px 0 5px 0
-  display: flex
-  align-items: center
   flex-wrap: wrap
+  @include flex-position(row, flex-start, center)
 
   p
     margin-right: 10px
@@ -14,15 +16,14 @@
 
   button
     padding: 8px 20px
-    background-color: royalblue
-    color: #fff
+    background-color: $blue
+    color: $white
     font-size: 1em
     font-family: 'Roboto', sans-serif
     cursor: pointer
     transition: .2s
-    border: 1px solid royalblue
-
+    border: 1px solid $blue
     &:hover
-      background-color: #fff
-      color: #000
-      border-color: #000
+      background-color: $white
+      color: $blue
+      border-color: $blue

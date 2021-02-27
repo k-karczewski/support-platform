@@ -8,8 +8,6 @@ import Navigation from './layout/navigation/Navigation';
 import RouteView from './layout/route view/RouteView';
 import Footer from './layout/footer/Footer';
 
-import './App.css';
-
 function App() {
   const decodedToken = useSelector(store => store.authStates.decodedToken);
 
