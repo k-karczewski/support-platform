@@ -1,11 +1,13 @@
+@import '../../../../../_styles/mixins'
+@import '../../../../../_styles/variables'
+
 .reportList__header
-  display: flex
-  align-items: center
   padding: 10px 0
   font-size: .9em
   font-weight: bold
-  color: #fff
+  color: $white
   background-color: #444
+  @include flex-position(row, flex-start, center)
 
   .header__element
     font-size: .95em
@@ -20,3 +22,47 @@
       flex-basis: 10%
     &:nth-child(5)
       flex-basis: 15%
+
+@media (max-width: 1024px)
+  .reportList__header
+    .header__element
+      font-size: .9em
+
+      &:nth-child(1)
+        flex-basis: 5%
+      &:nth-child(2)
+        flex-basis: 50%
+      &:nth-child(3)
+        flex-basis: 15%
+      &:nth-child(4)
+        flex-basis: 15%
+      &:nth-child(5)
+        flex-basis: 15%
+
+@media (max-width: 610px)
+  .reportList__header
+    padding: 5px 0
+
+    .header__element
+      font-size: .8em
+
+      &:nth-child(1)
+        flex-basis: 5%
+      &:nth-child(2)
+        flex-basis: 45%
+      &:nth-child(3)
+        flex-basis: 15%
+      &:nth-child(4)
+        flex-basis: 20%
+      &:nth-child(5)
+        flex-basis: 15%
+
+@media (max-width: 500px)
+  .reportList__header
+    .header__element
+      font-size: .75em
+
+@media (max-width: 320px)
+  .reportList__header
+    .header__element
+      font-size: .7em

@@ -26,3 +26,55 @@
         flex-basis: 10%
       &:nth-child(5)
         flex-basis: 15%
+
+@media (max-width: 1024px)
+  .report__item
+    .report__link
+      padding: 12px 0
+      &:hover
+        background-color: #aaa
+
+      .item__element
+        font-size: .9em
+
+        &:nth-child(1)
+          flex-basis: 5%
+        &:nth-child(2)
+          flex-basis: 50%
+        &:nth-child(3)
+          flex-basis: 15%
+        &:nth-child(4)
+          flex-basis: 15%
+        &:nth-child(5)
+          flex-basis: 15%
+
+@media (max-width: 610px)
+  .report__item
+    .report__link
+      padding: 10px 0
+
+      .item__element
+        font-size: .8em
+
+        &:nth-child(1)
+          flex-basis: 5%
+        &:nth-child(2)
+          flex-basis: 45%
+        &:nth-child(3)
+          flex-basis: 15%
+        &:nth-child(4)
+          flex-basis: 20%
+        &:nth-child(5)
+          flex-basis: 15%
+
+@media (max-width: 500px)
+  .report__item
+    .report__link
+      .item__element
+        font-size: .7em
+
+@media (max-width: 320px)
+  .report__item
+    .report__link
+      .item__element
+        font-size: .65em

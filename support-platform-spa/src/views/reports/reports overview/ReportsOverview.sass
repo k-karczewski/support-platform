@@ -1,18 +1,20 @@
+@import '../../../_styles/mixins'
+@import '../../../_styles/variables'
+
 .reports__overview
+  min-height: calc(100vh - 115px)
   align-items: center
-  min-height: 80vh
-  margin: 0 auto
-  padding-bottom: 50px
+  padding: 50px 20px
 
   .container
-    width: 50%
+    width: 950px
     margin: 0 auto
 
     .pagination
       display: flex
-      justify-content: space-around
+      justify-content: space-between
       padding: 10px
-      background-color: #fff
+      background-color: $white
       list-style: none
       width: 70%
       margin: 20px auto 0 auto
@@ -20,17 +22,72 @@
       li
         width: 35px
         height: 35px
-        line-height: 32px
-        border: 2px solid #ddd
+        border: 2px solid $gray
         cursor: pointer
+        @include flex-position(row, center, center)
 
         &.active
           border-color: royalblue
           background-color: royalblue
-          color: #fff
+          color: $white
 
-        a
-          display: block
-          text-align: center
-          width: 31px
-          height: 31px
+@media (max-width: 1024px)
+  .reports__overview
+    min-height: calc(100vh - 130px)
+
+    .container
+      width: 720px
+
+@media (max-width: 768px)
+  .reports__overview
+    min-height: calc(100vh - 130px)
+
+    .container
+      width: 580px
+
+      .pagination
+        width: 100%
+        padding: 5px
+
+@media (max-width: 610px)
+  .reports__overview
+    min-height: calc(100vh - 130px)
+
+    .container
+      width: 450px
+
+      .pagination
+        li
+          width: 30px
+          height: 30px
+
+@media (max-width: 500px)
+  .reports__overview
+    .container
+      width: 380px
+
+      .pagination
+        li
+          width: 30px
+          height: 30px
+
+@media (max-width: 375px)
+  .reports__overview
+    .container
+      width: 340px
+
+      .pagination
+        li
+          width: 25px
+          height: 25px
+
+@media (max-width: 320px)
+  .reports__overview
+    padding: 50px 5px
+    .container
+      width: 300px
+
+      .pagination
+        li
+          width: 20px
+          height: 20px
