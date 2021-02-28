@@ -2,16 +2,63 @@
 @import '../../../_styles/variables'
 
 .report__create
-  min-height: 90vh
-  @include flex-position(row, center, flex-start)
+  min-height: calc(100vh - 115px)
+  @include flex-position(row, center, center)
 
   .container
-    width: 33.333%
+    width: 620px
     padding: 15px 0 0 0
     background-color: $white
     @include box-shadow
 
     .form__create
-      height: 60vh
+      height: 600px
       padding: 0px 50px 35px 50px
       @include flex-position(column, center, flex-start)
+
+@media (max-width: 1366px)
+  .report__create
+    .container
+      width: 500px
+      .form__create
+        height: 550px
+
+@media (max-width: 1024px)
+  .report__create
+    min-height: calc(100vh - 130px)
+    flex-direction: column-reverse
+    align-content: center
+
+    .container
+      width: 480px
+      .form__create
+        height: 500px
+
+@media (max-width: 768px)
+  .report__create
+    .container
+      width: 480px
+
+@media (max-width: 500px)
+  .report__create
+    .container
+      width: 350px
+      .form__create
+        height: 400px
+        padding: 0px 30px 35px 30px
+
+@media (max-width: 375px)
+  .report__create
+    .container
+      width: 340px
+      .form__create
+        height: 55vh
+        // padding: 0px 30px 35px 30px
+
+@media (max-width: 320px)
+  .report__create
+    .container
+      width: 280px
+      .form__create
+        height: 50vh
+        padding: 0px 20px 20px 20px
